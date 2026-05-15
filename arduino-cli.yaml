@@ -1,0 +1,16 @@
+# arduino-cli.yaml
+
+board_manager:
+  additional_urls: []
+
+directories:
+  data: .arduino/data
+  downloads: .arduino/downloads
+  user: .arduino/user
+
+library:
+  enable_unsafe_install: false
+
+logging:
+  level: info
+  format: text

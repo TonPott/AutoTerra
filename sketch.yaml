@@ -1,0 +1,15 @@
+default_profile: nano33iot
+
+profiles:
+  nano33iot:
+    fqbn: arduino:samd:nano_33_iot
+    platforms:
+      - platform: arduino:samd
+    libraries:
+      - WiFiNINA
+
+  mega2560:
+    fqbn: arduino:avr:mega
+    platforms:
+      - platform: arduino:avr
+    libraries: []
