@@ -237,9 +237,69 @@ Design:
 
 - one shared PWM output controls both fans,
 - two tach inputs are measured separately,
-- PWM driver circuit is already prepared and is **inverting**,
+- PWM driver circuit uses an inverting 2N3904 NPN transistor stage,
 - tach signals are open collector,
-- external 10 kΩ pull-ups are used.
+- tach inputs use separate external 10 kΩ pull-ups to 3.3 V.
+
+#### 6.1.1 Fan supply wiring
+
+Both fans are powered directly from the shared 5 V supply:
+
+- fan yellow wires connect to the +5 V supply,
+- fan black wires connect to common GND,
+- Arduino Nano 33 IoT is powered from the same 5 V supply through VIN.
+
+All grounds must be common: power supply GND, Nano GND, both fan grounds, and the 2N3904 emitter.
+
+Two NF-A4x20 5V PWM fans need about 0.2 A maximum for the fans alone. The power supply must also reserve current for the Nano, sensors, relay module, startup transients, and load peaks.
+
+A local bulk capacitor on the 5 V rail, for example 100 µF near the fan or power distribution point, is recommended as hardware decoupling. This is not a firmware requirement.
+
+#### 6.1.2 Shared fan PWM driver
+
+The shared fan PWM line is driven by a 2N3904 used as an NPN open-collector style driver:
+
+- Nano D6 connects through a 2.2 kΩ base resistor to the 2N3904 base,
+- 2N3904 emitter connects to GND,
+- 2N3904 collector connects to the shared fan PWM node,
+- the blue PWM wires of both fans connect to this shared collector node,
+- the shared fan PWM node has an external 2.2 kΩ pull-up to +5 V,
+- an optional 10 kΩ base pulldown from base to GND may be used so the transistor stays off during reset.
+
+This circuit intentionally inverts the PWM signal:
+
+- Arduino output high -> transistor on -> fan PWM line low,
+- Arduino output low or high-Z during reset -> transistor off -> fan PWM line pulled high.
+
+Therefore `FanControl` must continue to convert effective fan percent to inverted PWM hardware duty.
+
+The external 2.2 kΩ pull-up is intentional so the PWM line has defined edges with both fans connected and the Nano GPIO does not directly drive or sink both fan PWM inputs. The 5 V PWM line exists only at the fan PWM inputs, the pull-up, and the transistor collector. It must not be directly connected to a Nano input or output pin.
+
+#### 6.1.3 Separate RPM/tach wiring
+
+The fan tach signals are wired separately:
+
+- fan 1 green tach wire connects to D9,
+- fan 2 green tach wire connects to D10,
+- each tach line has its own external 10 kΩ pull-up to 3.3 V,
+- tach outputs must not be tied together,
+- tach pull-ups must not connect to 5 V.
+
+The tach outputs are open collector. With 3.3 V pull-ups they are compatible with Nano 33 IoT inputs.
+
+RPM calculation should assume two pulses per revolution unless later hardware testing proves otherwise. D9 and D10 must be used as interrupt-capable or otherwise reliably sampled tach inputs according to the final Nano 33 IoT implementation approach.
+
+#### 6.1.4 PWM frequency
+
+Fan PWM shall target the Noctua / 4-pin-PWM typical high-frequency range around 25 kHz. The timer configuration for Nano 33 IoT / SAMD21 must be implemented intentionally; default `analogWrite()` behavior must not be assumed to produce the required fan-control frequency. The implementation must verify the actual PWM frequency during hardware bring-up.
+
+#### 6.1.5 Protection and level notes
+
+- Tach pull-ups go to 3.3 V to protect Nano inputs.
+- The fan PWM pull-up goes to 5 V because it is a fan-control line driven only through the transistor collector and not directly connected to a Nano input or output.
+- Do not connect fan tach outputs to 5 V pull-ups.
+- Do not drive two fan PWM inputs directly from the Nano GPIO in this design.
+- Keep common ground between Arduino and fan supply.
 
 The firmware shall operate in effective fan percentage:
 
@@ -258,7 +318,7 @@ effective 40%  -> hardware duty 60%
 effective 100% -> hardware duty 0%
 ```
 
-Fan PWM shall target the Noctua-recommended high-frequency PWM range. The `FanControl` hardware layer shall account for the inverting driver and expose only effective fan percentage to the rest of the firmware.
+The `FanControl` hardware layer shall account for the inverting driver and expose only effective fan percentage to the rest of the firmware.
 
 ### 6.2 Fan modes
 
@@ -647,9 +707,9 @@ A previous isolated test confirmed that a sensor entity can be used successfully
 D2   DS3231 INT/SQW
 D3   IR LED output
 D5   water level frequency input
-D6   shared fan PWM output, inverted driver
-D9   fan 1 tach input
-D10  fan 2 tach input
+D6   shared fan PWM output to 2N3904 inverting driver
+D9   fan 1 tach input with external 10 kΩ pull-up to 3.3 V
+D10  fan 2 tach input with external 10 kΩ pull-up to 3.3 V
 D11  pump relay control
 A0   NTC water temperature
 A4   I2C SDA

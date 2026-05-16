@@ -72,7 +72,8 @@ This repository contains the Arduino firmware documentation and later the firmwa
 - DS3231 INT/SQW is intended for D2.
 - The water level sensor is a frequency output, not I²C; D5 is the intended input.
 - The fan PWM driver is inverting; internal logic always works with effective fan percent.
-- Tach inputs are separate per fan and use external 10 kΩ pull-ups.
+- Fan PWM is driven through an inverting 2N3904 transistor stage from D6; the shared fan PWM node uses a 2.2 kΩ pull-up to +5 V and must not be driven directly by the Nano GPIO.
+- Tach inputs are separate per fan and use external 10 kΩ pull-ups to 3.3 V.
 
 ## Documentation rules
 

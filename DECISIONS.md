@@ -167,19 +167,19 @@ Manual fan control must remain predictable during Home Assistant or MQTT loss.
 Consequences:
 The firmware must retain manual fan mode and the last manual percent across restart and communication loss.
 
-## 2026-05-16 – Fan PWM driver is inverting; internal logic uses effective fan percent
+## 2026-05-16 – Fan PWM uses an inverting 2N3904 driver and effective fan percent
 
 Status:
 Accepted
 
 Decision:
-Internal fan logic uses effective fan percent, while the hardware driver converts that value to the inverted PWM duty required by the external driver circuit.
+Internal fan logic uses effective fan percent, while `FanControl` converts that value to the inverted PWM duty required by the external driver circuit. The shared fan PWM signal is driven through an inverting 2N3904 NPN transistor stage. The shared fan PWM node uses a 2.2 kΩ pull-up to +5 V, and the Nano GPIO must not directly drive the two fan PWM inputs. Fan tach pull-ups are separate 10 kΩ resistors to 3.3 V.
 
 Reason:
-Keeping inversion at the hardware boundary avoids spreading inverted-duty reasoning through the rest of the firmware.
+The transistor stage protects the Nano GPIO from the 5 V fan PWM line, supports both fan PWM inputs from one shared signal, and keeps inversion isolated at the hardware boundary.
 
 Consequences:
-`FanControl` should own the conversion from effective percent to hardware duty.
+`FanControl` owns the conversion from effective fan percent to inverted PWM hardware duty. Tach inputs remain separate and use 3.3 V pull-ups to protect Nano inputs.
 
 ## 2026-05-16 – SHT/I²C errors do not automatically force MANUAL fan mode to 100%
 

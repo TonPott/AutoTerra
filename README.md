@@ -52,7 +52,7 @@ Main external modules:
 - B3950 10K NTC thermistor for water temperature
 - CQRobot multi-point photoelectric liquid level sensor with frequency output
 - CQRobot/Adafruit-compatible TCS34725 light/color sensor
-- two Noctua NF-A4x20 5V PWM fans
+- two Noctua NF-A4x20 5V PWM fans with a shared transistor-buffered PWM line and separate tach inputs
 - pump relay module using 3.3 V logic
 - IR LED driver circuit for the remote-controlled lamp
 

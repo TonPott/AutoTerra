@@ -20,6 +20,8 @@ It does not redefine current requirements. The target behavior remains documente
 - Verify ArduinoHA text-like sensor behavior is already completed successfully, but keep the result documented as an accepted premise.
 - Verify how to generate approximately 25 kHz PWM on Arduino Nano 33 IoT / SAMD21 for Noctua PWM fans.
 - Confirm that fan PWM driver inversion is handled only inside `FanControl`.
+- Verify final D6 timer setup and measured PWM frequency on real hardware.
+- Verify clean fan PWM signal shape with both fans connected to the shared 2N3904 collector node.
 - Validate that the selected ArduinoHA entity types work as expected for fan, select, number, binary sensor, button, switch, and text-like sensor output.
 - Validate DS3231 alarm support in RTClib; if incomplete, plan direct register handling inside `RtcClock`.
 - Confirm the final pin map against the real hardware layout before firmware implementation.
@@ -42,7 +44,7 @@ It does not redefine current requirements. The target behavior remains documente
 
 - Measure minimum reliable PWM percentage for the Noctua fans.
 - Provide and later integrate the final PWM-to-RPM calibration table.
-- Test fan tach readings with external 10 kΩ pull-ups.
+- Test fan tach readings with separate external 10 kΩ pull-ups to 3.3 V.
 - Test the water level sensor frequencies in the real tank.
 - Evaluate the 6-hour stabilization rule with the real water surface behavior.
 - Test the immediate pump cutoff at the `without liquid` level.

@@ -371,9 +371,15 @@ Persistent values:
 
 Important:
 
-- PWM driver is inverting.
+- PWM is output on D6 through an inverting 2N3904 NPN transistor stage.
+- D6 drives the transistor base through a 2.2 kΩ resistor; the shared fan PWM node is the transistor collector.
+- The blue PWM wires of both fans share the collector node with an external 2.2 kΩ pull-up to +5 V.
+- The 5 V fan PWM node must not be directly connected to a Nano GPIO.
 - inversion handling belongs inside `FanControl`.
-- tach pull-ups are external 10 kΩ.
+- tach pull-ups are separate external 10 kΩ resistors to 3.3 V, one per tach input.
+- fan 1 tach uses D9 and fan 2 tach uses D10.
+- tach signals must not be tied together and must not use 5 V pull-ups.
+- RPM calculation should assume two pulses per revolution unless hardware testing proves otherwise.
 - one RPM table will be provided later for both fans.
 
 ## 20. `PumpSafety.*`
