@@ -22,14 +22,31 @@ fi
 arduino-cli core update-index
 arduino-cli lib update-index
 
-# Cores für deine Standardboards
+# Project board
 arduino-cli core install arduino:samd
-arduino-cli core install arduino:avr
 
-# Wenn sketch.yaml existiert, Profile vorbereiten.
+libraries=(
+  "Adafruit BusIO@1.17.4"
+  "Arduino_SpiNINA@0.0.2"
+  "PubSubClient@2.8"
+  "Sensirion Core@0.7.3"
+  "Sensirion I2C SHT4x@1.1.2"
+  "RTClib@2.1.4"
+  "WiFiNINA@2.0.1"
+  "home-assistant-integration@2.1.0"
+  "JC_EEPROM@1.0.10"
+  "Streaming@6.2.4"
+  "NTC_Thermistor@1.1.4"
+  "Adafruit TCS34725@1.4.4"
+  "IRremote@4.7.1"
+)
+
+for library in "${libraries[@]}"; do
+  arduino-cli lib install "$library"
+done
+
 if [[ -f "$REPO_ROOT/sketch.yaml" ]]; then
   arduino-cli compile --profile nano33iot .
-  arduino-cli compile --profile mega2560 .
 fi
 
 arduino-cli version

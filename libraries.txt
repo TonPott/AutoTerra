@@ -1,0 +1,119 @@
+# libraries.txt – Required Arduino libraries
+
+Target board: Arduino Nano 33 IoT
+
+Install these libraries through Arduino IDE Library Manager where possible.
+
+## Required libraries
+
+### Sensirion arduino-i2c-sht4x
+
+Purpose:
+- Read SHT45 air temperature and humidity.
+
+Repository:
+- https://github.com/Sensirion/arduino-i2c-sht4x
+
+Notes:
+- Also requires the Sensirion Core dependency.
+- Replaces all SHT31 alert-mode logic.
+- No hardware alert mode is used.
+
+### Adafruit RTClib
+
+Purpose:
+- Work with DS3231 RTC.
+- Read and set time.
+- Manage date/time structures.
+
+Repository:
+- https://github.com/adafruit/RTClib
+
+Notes:
+- DS3231 alarms may require checking exact library support. If alarm support is incomplete, implement the missing register access in `RtcClock`.
+
+### WiFiNINA
+
+Purpose:
+- WiFi connection on Arduino Nano 33 IoT.
+
+Documentation:
+- https://docs.arduino.cc/libraries/wifinina/
+
+### arduino-home-assistant
+
+Purpose:
+- MQTT discovery and Home Assistant entity integration.
+
+Repository:
+- https://github.com/dawidchyrzynski/arduino-home-assistant
+
+Notes:
+- Use ArduinoHA entities only.
+- No custom MQTT payload model in v1.
+- A separate test confirmed that a sensor entity can be used for text-like status output in this environment.
+
+### JC_EEPROM
+
+Purpose:
+- Access external AT24C32 I2C EEPROM.
+
+Repository:
+- https://github.com/JChristensen/JC_EEPROM
+
+Notes:
+- Used for config and runtime blobs.
+- EEPROM is read at boot and written on changes.
+- RAM is the runtime source of truth.
+
+### Streaming
+
+Purpose:
+- Helper library used with JC_EEPROM examples and diagnostics.
+
+Repository:
+- https://github.com/janelia-arduino/Streaming
+
+### NTC_Thermistor
+
+Purpose:
+- Convert analog NTC readings to temperature.
+
+Repository:
+- https://github.com/suoapvs/NTC_Thermistor
+
+Notes:
+- Used for B3950 10K NTC water temperature.
+- Nominal resistance: 10 kΩ.
+- B value: 3950.
+- Nominal temperature: 25 °C.
+- Pull-down resistor likely 8.2 kΩ.
+- `sketch.yaml` currently pins version 1.1.4 because version 2.1.0 fails to compile for `arduino:samd:nano_33_iot` due to unguarded ESP32-specific `analogReadMilliVolts()` usage.
+- Version 1.1.4 performs averaged reads with an internal delay; firmware code must account for this or re-evaluate the library before production implementation.
+
+### Adafruit TCS34725
+
+Purpose:
+- Read TCS34725 color/light sensor.
+
+Typical include:
+- `Adafruit_TCS34725.h`
+
+Repository:
+- https://github.com/adafruit/Adafruit_TCS34725
+
+Notes:
+- First version uses Clear raw value for on/off verification.
+- RGB/lux/color temperature can be used later for diagnostics.
+
+### IRremote
+
+Purpose:
+- Send IR commands to the terrarium light.
+
+Typical include:
+- `IRremote.hpp`
+
+Notes:
+- Existing light code uses IR command mapping and non-blocking send queue.
+- Verify compatibility with Arduino Nano 33 IoT.
