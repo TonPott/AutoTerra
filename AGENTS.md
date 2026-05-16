@@ -1,92 +1,96 @@
-# Codex-Regeln für AutoTerra
+# Codex rules for AutoTerra
 
-Dieses Repository enthält die Arduino-Firmware-Dokumentation und später die Firmware für den automatisierten Terrarium-Controller `AutoTerra`.
+This repository contains the Arduino firmware documentation and later the firmware for the automated terrarium controller `AutoTerra`.
 
-## Projektphase
+## Project phase
 
-- Das Projekt ist aktuell in der Design- und Dokumentationsphase.
-- Vor produktiver Firmware-Implementierung müssen `SPEC.md`, `MODULES.md`, `entity-model.md`, `libraries.txt`, `HA_DASHBOARD.md` und `HA_AUTOMATIONS.md` gelesen und akzeptiert sein.
-- `AutoTerra.ino` bleibt bis dahin nur ein minimaler, kompilierbarer Platzhalter.
-- Keine Firmware-Logik implementieren, solange die Aufgabe nicht ausdrücklich Implementierung verlangt.
+- The project is currently in the design and documentation phase.
+- Before production firmware implementation starts, `SPEC.md`, `MODULES.md`, `entity-model.md`, `libraries.txt`, `HA_DASHBOARD.md`, and `HA_AUTOMATIONS.md` must be read and accepted.
+- Until then, `AutoTerra.ino` remains only a minimal compileable placeholder.
+- Do not implement firmware logic unless the task explicitly asks for implementation.
 
-## Standard-Workflow
+## Standard workflow
 
-- Neue Features bevorzugt in einem Codex-Worktree bearbeiten.
-- Nicht direkt auf `main` committen.
-- Änderungen klein und reviewbar halten.
-- Keine generierten Build-Artefakte committen.
-- Vorhandene User-Änderungen nicht zurücksetzen.
-- Keine Pinbelegung, Board-Auswahl oder Library-Wechsel ändern, außer ausdrücklich angefordert.
-- Offene Entscheidungen klar als `TODO` oder `Open Question` markieren.
+- Prefer working on new features in a Codex worktree.
+- Do not commit directly to `main`.
+- Keep changes small and reviewable.
+- Do not commit generated build artifacts.
+- Do not revert existing user changes.
+- Do not change pin assignments, board selection, or libraries unless explicitly requested.
+- Mark open decisions clearly as `TODO` or `Open Question`.
 
-## Zielplattform
+## Target platform
 
-- Zielboard ist ausschließlich Arduino Nano 33 IoT.
-- Kein AVR-/Mega-Kompatibilitätslayer hinzufügen, außer das wird ausdrücklich neu entschieden.
-- `sketch.yaml` verwendet das Profil `nano33iot` mit `arduino:samd:nano_33_iot`.
+- The only target board is Arduino Nano 33 IoT.
+- Do not add an AVR or Arduino Mega compatibility layer unless that decision is explicitly revisited.
+- `sketch.yaml` uses the `nano33iot` profile with `arduino:samd:nano_33_iot`.
 
-## Firmware-Architektur
+## Firmware architecture
 
-- `AutoTerra.ino` darf nur orchestrieren: Module initialisieren, `begin()` aufrufen und periodische `update()`-Methoden aufrufen.
-- Keine Business-Logik, Sensorlogik, EEPROM-Zugriffe oder Home-Assistant-Kommandoverarbeitung direkt in `AutoTerra.ino`.
-- Hardwarefunktionen gehören in eigene Module gemäß `MODULES.md`.
-- Produktionslogik nicht mit blockierenden `delay()`-Aufrufen bauen, außer eine Library oder ein Hardwareprotokoll benötigt ausdrücklich kurze Wartezeiten.
-- Scheduling bevorzugt mit `millis()` umsetzen.
-- Debugausgaben hinter einem Compile-Time-Debug-Flag halten und nie persistent speichern.
+- `AutoTerra.ino` may only orchestrate: initialize modules, call `begin()`, and call periodic `update()` methods.
+- Do not put business logic, sensor logic, EEPROM access, or Home Assistant command handling directly in `AutoTerra.ino`.
+- Hardware features belong in separate modules according to `MODULES.md`.
+- Do not build production logic with blocking `delay()` calls unless a library or hardware protocol explicitly requires a short wait.
+- Prefer `millis()`-based scheduling.
+- Keep debug output behind a compile-time debug flag and never persist debug state.
 
 ## Home Assistant / MQTT
 
-- Für v1 `arduino-home-assistant` bzw. die Library `home-assistant-integration` verwenden.
-- Keine eigene Custom-MQTT-Payload-Architektur für v1 bauen.
-- Home-Assistant-Entitäten gemäß `entity-model.md` anlegen und aktuell halten.
-- Nach MQTT-/HA-Reconnect aktuelle Zustände, Availability, Warnungen und Faults erneut publizieren.
-- Hardware-Faults nicht nur deshalb löschen, weil Home Assistant wieder verbunden ist.
-- Viele `Number`-Entitäten für Fan-Kurvenpunkte sind akzeptiert.
-- Textartige Statusausgaben über Sensor-Entities sind erlaubt, weil ein separater Test diese Nutzung bestätigt hat.
+- For v1, use `arduino-home-assistant`, provided by the `home-assistant-integration` library.
+- Do not build a custom MQTT payload architecture for v1.
+- Create and maintain Home Assistant entities according to `entity-model.md`.
+- After MQTT or Home Assistant reconnect, republish current states, availability, warnings, and faults.
+- Do not clear hardware faults merely because Home Assistant has reconnected.
+- Many `Number` entities for fan curve points are acceptable.
+- Text-like status output through sensor entities is allowed because a separate test confirmed this works.
 
-## Persistenz
+## Persistence
 
-- AT24C32 über `JC_EEPROM` verwenden.
-- EEPROM beim Boot lesen, danach RAM als aktive Laufzeit-Wahrheit verwenden.
-- EEPROM nur schreiben, wenn Konfiguration oder Recovery-Daten geändert wurden.
-- Nicht ständig EEPROM während des Betriebs lesen.
-- Persistenz in Config-Blob und Runtime-Blob trennen.
-- Header-Felder `magic`, `version` und `length` verwenden.
-- Für v1 keine CRC implementieren.
-- Pumpen-Override bei Wasserstandssensorfehler darf nicht persistent sein.
+- Use AT24C32 through `JC_EEPROM`.
+- Read EEPROM at boot, then use RAM as the active runtime source of truth.
+- Write EEPROM only when configuration or recovery data changes.
+- Do not constantly read EEPROM during operation.
+- Split persistence into a config blob and a runtime blob.
+- Use header fields `magic`, `version`, and `length`.
+- Do not implement CRC for v1.
+- Pump override during water level sensor failure must not be persistent.
 
-## Sicherheitsregeln
+## Safety rules
 
-- Pumpensicherheit bleibt lokal auf dem Arduino.
-- Kritischer Wasserstand und Wasserstandssensorfehler schalten die Pumpe lokal ab.
-- Pumpe nach Cutoff nicht automatisch neu starten.
-- Home Assistant darf bei Sensorfehler bewusst wieder freigeben, aber dieser Override gilt nur bis zum nächsten Arduino-Neustart.
-- Firmware darf nur das Relais kommandieren; sichere Netzspannungsverdrahtung, Isolation, Gehäuse und Zugentlastung sind Hardwareanforderungen.
-- Nicht annehmen, dass ein GPIO direkt eine Relaisspule treiben kann.
+- Pump safety remains local on the Arduino.
+- Critical water level and water level sensor failure turn the pump off locally.
+- Do not automatically restart the pump after cutoff.
+- Home Assistant may consciously re-enable the pump during sensor failure, but this override only lasts until the next Arduino restart.
+- Firmware may only command the relay; safe mains wiring, isolation, enclosure, and strain relief are hardware requirements.
+- Do not assume that a GPIO can drive a relay coil directly.
 
-## Bereichsspezifische Regeln
+## Domain-specific rules
 
-- SHT45 verwenden; keine SHT31-Alert-Mode-Logik reintroduzieren.
-- Keine NeoPixel-Alert-Ausgabe reintroduzieren.
-- IR-Ausgabe bleibt auf D3, solange die Pinbelegung nicht ausdrücklich geändert wird.
-- DS3231 INT/SQW ist für D2 vorgesehen.
-- Der Wasserstandssensor ist ein Frequenzausgang, nicht I²C; D5 ist der vorgesehene Eingang.
-- Fan-PWM-Treiber ist invertierend; interne Logik arbeitet immer mit effektivem Fan-Prozent.
-- Tach-Eingänge sind getrennt je Lüfter und verwenden externe 10-kΩ-Pull-ups.
+- Use SHT45; do not reintroduce SHT31 alert-mode logic.
+- Do not reintroduce NeoPixel alert output.
+- IR output remains on D3 unless the pin assignment is explicitly changed.
+- DS3231 INT/SQW is intended for D2.
+- The water level sensor is a frequency output, not I²C; D5 is the intended input.
+- The fan PWM driver is inverting; internal logic always works with effective fan percent.
+- Tach inputs are separate per fan and use external 10 kΩ pull-ups.
 
-## Dokumentationsregeln
+## Documentation rules
 
-- Begriffe konsistent mit `SPEC.md` halten.
-- `MODULES.md` aktualisieren, wenn sich Modulverantwortungen ändern.
-- `entity-model.md` aktualisieren, wenn sich HA-Entitäten ändern.
-- `libraries.txt` und `sketch.yaml` gemeinsam aktualisieren, wenn sich Abhängigkeiten ändern.
-- `HA_DASHBOARD.md` und `HA_AUTOMATIONS.md` erst finalisieren, wenn Firmware-Entities stabil sind.
+- Keep terminology consistent with `SPEC.md`.
+- Update `MODULES.md` when module responsibilities change.
+- Update `entity-model.md` when Home Assistant entities change.
+- Update `libraries.txt` and `sketch.yaml` together when dependencies change.
+- Open tasks, validation work, known risks, and deferred decisions belong in `ROADMAP.md`.
+- Accepted design rationale belongs in `DECISIONS.md`.
+- Requirement documents should describe the current target state and should not be cluttered with implementation TODOs unless the uncertainty is itself part of the requirement.
+- Do not create `Credentials.example.h` during documentation-only work. Create it together with the first WiFi/MQTT implementation, and include only credentials that are actually required by that implementation.
+- Finalize `HA_DASHBOARD.md` and `HA_AUTOMATIONS.md` only after firmware entities are stable.
 
-## Build / Verify
+## Build / verify
 
-Nach Code- oder Build-Konfigurationsänderungen muss Codex den passenden Compile-Check ausführen.
+After code or build configuration changes, Codex must run the matching compile check.
 
-Windows / lokale Codex-App:
+Windows / local Codex app:
 
 ```powershell
 .\scripts\check-arduino.ps1
@@ -98,22 +102,22 @@ Linux / Codex Cloud / GitHub Actions:
 ./scripts/check-arduino.sh
 ```
 
-Bei reinen Dokumentationsänderungen reicht Diff-Prüfung; falls Build-Dateien oder Sketch-Dateien betroffen sind, kompilieren.
+For documentation-only changes, diff review is sufficient. If build files or sketch files changed, compile.
 
-## Commit-Regeln
+## Commit rules
 
-Codex darf erst committen, wenn:
+Codex may commit only after:
 
-- der notwendige Arduino-Compile-Check erfolgreich war,
-- der Diff geprüft wurde,
-- keine unnötigen Dateien geändert wurden,
-- keine Build-Artefakte im Commit enthalten sind.
+- the required Arduino compile check has passed,
+- the diff has been reviewed,
+- no unnecessary files were changed,
+- no build artifacts are included in the commit.
 
-## Done Means
+## Done means
 
-Eine Aufgabe gilt erst als fertig, wenn:
+A task is complete only when:
 
-- die angeforderten Dateien aktualisiert sind,
-- die Firmware kompiliert, sofern Code oder Build-Konfiguration geändert wurde,
-- Codex die geänderten Dateien zusammenfasst,
-- offene Risiken oder nicht lokal/hardwareseitig getestete Punkte genannt werden.
+- the requested files are updated,
+- the firmware compiles when code or build configuration changed,
+- Codex summarizes the changed files,
+- open risks or points not tested locally or on hardware are named.

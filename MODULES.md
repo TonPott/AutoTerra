@@ -339,10 +339,12 @@ Normal publication:
 
 - water level in mm.
 
-Optional diagnostics:
+Optional diagnostics during setup, calibration, or troubleshooting:
 
 - level,
 - raw frequency.
+
+The normal user-facing Home Assistant value is water level in mm. Internal level and raw frequency are not required for the regular dashboard unless calibration or troubleshooting requires them.
 
 PumpSafety consumes raw or classified level for safety decisions.
 
@@ -370,6 +372,7 @@ Persistent values:
 Important:
 
 - PWM driver is inverting.
+- inversion handling belongs inside `FanControl`.
 - tach pull-ups are external 10 kΩ.
 - one RPM table will be provided later for both fans.
 

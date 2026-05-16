@@ -59,16 +59,18 @@ terrarium_pump_cutoff_active
 | Entity | Type | Unit | Direction | Notes |
 |---|---|---:|---|---|
 | `water_level_mm` | Sensor number | mm | Arduino → HA | primary value |
-| `water_level_warning` | Binary sensor | - | Arduino → HA or HA automation | one level before critical |
+| `water_level_warning` | Binary sensor | - | Arduino → HA | One level before critical; detected locally by Arduino. |
 | `water_level_sensor_fault` | Binary sensor | - | Arduino → HA | invalid/unavailable sensor |
 | `water_fast_drop_warning` | Binary sensor | - | Arduino → HA | lower level reached before 6h stabilization |
 
-Optional diagnostics if needed:
+Optional diagnostics during setup, calibration, or troubleshooting:
 
 | Entity | Type | Unit | Direction | Notes |
 |---|---|---:|---|---|
-| `water_level_raw_level` | Sensor number | - | Arduino → HA | internal level |
-| `water_level_frequency` | Sensor number | Hz | Arduino → HA | calibration/debug only |
+| `water_level_raw_level` | Sensor number | - | Arduino → HA | Optional internal level diagnostic |
+| `water_level_frequency` | Sensor number | Hz | Arduino → HA | Optional raw frequency diagnostic |
+
+The normal user-facing Home Assistant value is `water_level_mm`. The optional diagnostic values are not required for the regular dashboard unless setup, calibration, or troubleshooting requires them.
 
 ### 2.4 Fans
 

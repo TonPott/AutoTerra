@@ -258,7 +258,7 @@ effective 40%  -> hardware duty 60%
 effective 100% -> hardware duty 0%
 ```
 
-PWM shall target the Noctua recommended high-frequency PWM range. The exact timer setup for the Nano 33 IoT must be implemented intentionally; simple default `analogWrite()` must not be assumed to produce a correct fan-control frequency.
+Fan PWM shall target the Noctua-recommended high-frequency PWM range. The `FanControl` hardware layer shall account for the inverting driver and expose only effective fan percentage to the rest of the firmware.
 
 ### 6.2 Fan modes
 
@@ -380,16 +380,16 @@ The suggested pin is **D5**, because D2 is used for RTC interrupt and D3 is used
 
 The level is evaluated once per minute.
 
-Default HA publication:
+Normal HA publication:
 
 - water level in mm.
 
-Optional diagnostic HA values may include:
+Optional diagnostics during setup, calibration, or troubleshooting:
 
 - internal level,
 - raw frequency.
 
-Raw frequency is not required for normal HA use unless needed for calibration or diagnostics.
+Raw frequency is not required for the normal dashboard and should not be considered part of the regular user-facing entity set unless calibration or troubleshooting requires it.
 
 ### 8.3 Mechanical calibration
 
@@ -656,7 +656,7 @@ A4   I2C SDA
 A5   I2C SCL
 ```
 
-Pin assignments must be verified against the final hardware layout before implementation.
+This is the current intended pin map. Pin assignments may change only through an explicit design update.
 
 ## 15. Documentation-first implementation rule
 
@@ -668,7 +668,8 @@ Before firmware implementation, generate and review:
 - `AGENTS.md`,
 - `libraries.txt`,
 - `HA_DASHBOARD.md`,
-- `HA_AUTOMATIONS.md`,
-- `Credentials.example.h`.
+- `HA_AUTOMATIONS.md`.
+
+`Credentials.example.h` is created together with the first WiFi/MQTT implementation. It should contain only credentials that are actually needed by the implemented connectivity layer. Until connectivity code exists, credential fields should not be guessed.
 
 Firmware implementation starts only after the documentation is accepted.
