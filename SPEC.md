@@ -416,8 +416,9 @@ A B3950 10K NTC thermistor measures water temperature.
 Requirements:
 
 - connected to analog input,
-- pull-down resistor topology,
-- resistor value likely 8.2 kΩ,
+- voltage divider topology,
+- 8.2 kΩ reference resistor from 3.3 V to A0,
+- B3950 10K NTC from A0 to GND,
 - nominal thermistor resistance: 10 kΩ,
 - B value: 3950,
 - nominal temperature: 25 °C,
@@ -428,6 +429,14 @@ Requirements:
   - Kelvin.
 
 The frontend later decides which value is displayed.
+
+Wiring:
+
+```text
+3.3 V -> 8.2 kΩ -> A0 -> B3950 NTC -> GND
+```
+
+The 8.2 kΩ resistor is the upper reference leg, and the NTC is the lower leg to GND.
 
 ## 8. Water level
 

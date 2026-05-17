@@ -331,7 +331,13 @@ Responsibilities:
 - detect implausible values if possible,
 - report availability/fault.
 
-A0 is the suggested analog input.
+A0 is the assigned analog input.
+
+The water temperature circuit is a voltage divider:
+
+```text
+3.3 V -> 8.2 kΩ reference resistor -> A0 -> B3950 NTC -> GND
+```
 
 ## 18. `LiquidSensor.*`
 
