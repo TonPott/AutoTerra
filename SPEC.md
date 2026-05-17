@@ -181,6 +181,19 @@ Required tables:
 
 A TCS34725 light/color sensor is used to verify whether the lamp is broadly on or off.
 
+The AngelTCS34725US / TCS34725FN module is connected through I2C and power, and also uses prepared optional signal pins:
+
+- TCS34725 LED control is wired to Arduino D4,
+- D4 shall be configured as `OUTPUT`,
+- D4 LOW means sensor LED off,
+- D4 HIGH means sensor LED on,
+- the default firmware state shall keep the sensor LED off unless a measurement mode explicitly enables it,
+- normal light on/off verification shall use a defined LED state, initially LED off,
+- TCS34725 INT is wired to Arduino D7 and prepared for optional future use,
+- the TCS34725 INT output is open-drain,
+- D7 shall be configured as `INPUT_PULLUP`,
+- TCS34725 INT is not required for v1 logic; v1 uses periodic and event-triggered measurements.
+
 First firmware version:
 
 - no full color validation,
@@ -237,9 +250,69 @@ Design:
 
 - one shared PWM output controls both fans,
 - two tach inputs are measured separately,
-- PWM driver circuit is already prepared and is **inverting**,
+- PWM driver circuit uses an inverting 2N3904 NPN transistor stage,
 - tach signals are open collector,
-- external 10 kΩ pull-ups are used.
+- tach inputs use separate external 10 kΩ pull-ups to 3.3 V.
+
+#### 6.1.1 Fan supply wiring
+
+Both fans are powered directly from the shared 5 V supply:
+
+- fan yellow wires connect to the +5 V supply,
+- fan black wires connect to common GND,
+- Arduino Nano 33 IoT is powered from the same 5 V supply through VIN.
+
+All grounds must be common: power supply GND, Nano GND, both fan grounds, and the 2N3904 emitter.
+
+Two NF-A4x20 5V PWM fans need about 0.2 A maximum for the fans alone. The power supply must also reserve current for the Nano, sensors, relay module, startup transients, and load peaks.
+
+A local bulk capacitor on the 5 V rail, for example 100 µF near the fan or power distribution point, is recommended as hardware decoupling. This is not a firmware requirement.
+
+#### 6.1.2 Shared fan PWM driver
+
+The shared fan PWM line is driven by a 2N3904 used as an NPN open-collector style driver:
+
+- Nano D6 connects through a 2.2 kΩ base resistor to the 2N3904 base,
+- 2N3904 emitter connects to GND,
+- 2N3904 collector connects to the shared fan PWM node,
+- the blue PWM wires of both fans connect to this shared collector node,
+- the shared fan PWM node has an external 2.2 kΩ pull-up to +5 V,
+- an optional 10 kΩ base pulldown from base to GND may be used so the transistor stays off during reset.
+
+This circuit intentionally inverts the PWM signal:
+
+- Arduino output high -> transistor on -> fan PWM line low,
+- Arduino output low or high-Z during reset -> transistor off -> fan PWM line pulled high.
+
+Therefore `FanControl` must continue to convert effective fan percent to inverted PWM hardware duty.
+
+The external 2.2 kΩ pull-up is intentional so the PWM line has defined edges with both fans connected and the Nano GPIO does not directly drive or sink both fan PWM inputs. The 5 V PWM line exists only at the fan PWM inputs, the pull-up, and the transistor collector. It must not be directly connected to a Nano input or output pin.
+
+#### 6.1.3 Separate RPM/tach wiring
+
+The fan tach signals are wired separately:
+
+- fan 1 green tach wire connects to D9,
+- fan 2 green tach wire connects to D10,
+- each tach line has its own external 10 kΩ pull-up to 3.3 V,
+- tach outputs must not be tied together,
+- tach pull-ups must not connect to 5 V.
+
+The tach outputs are open collector. With 3.3 V pull-ups they are compatible with Nano 33 IoT inputs.
+
+RPM calculation should assume two pulses per revolution unless later hardware testing proves otherwise. D9 and D10 must be used as interrupt-capable or otherwise reliably sampled tach inputs according to the final Nano 33 IoT implementation approach.
+
+#### 6.1.4 PWM frequency
+
+Fan PWM shall target the Noctua / 4-pin-PWM typical high-frequency range around 25 kHz. The timer configuration for Nano 33 IoT / SAMD21 must be implemented intentionally; default `analogWrite()` behavior must not be assumed to produce the required fan-control frequency. The implementation must verify the actual PWM frequency during hardware bring-up.
+
+#### 6.1.5 Protection and level notes
+
+- Tach pull-ups go to 3.3 V to protect Nano inputs.
+- The fan PWM pull-up goes to 5 V because it is a fan-control line driven only through the transistor collector and not directly connected to a Nano input or output.
+- Do not connect fan tach outputs to 5 V pull-ups.
+- Do not drive two fan PWM inputs directly from the Nano GPIO in this design.
+- Keep common ground between Arduino and fan supply.
 
 The firmware shall operate in effective fan percentage:
 
@@ -258,7 +331,7 @@ effective 40%  -> hardware duty 60%
 effective 100% -> hardware duty 0%
 ```
 
-PWM shall target the Noctua recommended high-frequency PWM range. The exact timer setup for the Nano 33 IoT must be implemented intentionally; simple default `analogWrite()` must not be assumed to produce a correct fan-control frequency.
+The `FanControl` hardware layer shall account for the inverting driver and expose only effective fan percentage to the rest of the firmware.
 
 ### 6.2 Fan modes
 
@@ -374,22 +447,22 @@ Level 4:       400 Hz
 
 The sensor shall be read using a digital interrupt-capable input with INPUT_PULLUP.
 
-The suggested pin is **D5**, because D2 is used for RTC interrupt and D3 is used for IR.
+The assigned pin is **D5**, because D2 is used for RTC interrupt and D3 is used for IR.
 
 ### 8.2 Measurement and publication
 
 The level is evaluated once per minute.
 
-Default HA publication:
+Normal HA publication:
 
 - water level in mm.
 
-Optional diagnostic HA values may include:
+Optional diagnostics during setup, calibration, or troubleshooting:
 
 - internal level,
 - raw frequency.
 
-Raw frequency is not required for normal HA use unless needed for calibration or diagnostics.
+Raw frequency is not required for the normal dashboard and should not be considered part of the regular user-facing entity set unless calibration or troubleshooting requires it.
 
 ### 8.3 Mechanical calibration
 
@@ -455,7 +528,12 @@ The DS3231 provides local time and two alarms.
 Requirements:
 
 - DS3231 INT/SQW pin uses INPUT_PULLUP,
-- suggested pin: D2,
+- assigned pin: D2,
+- DS3231 INT/SQW remains on D2 and is used for stand-alone alarm triggers,
+- DS3231 32kHz output is wired to Arduino D8 and prepared for optional future use,
+- D8 shall be configured as INPUT_PULLUP,
+- the 32kHz signal is not used by v1 logic and no interrupt shall be attached by default,
+- if 32kHz is enabled later, it must be handled carefully because it is a high-frequency signal,
 - alarms are used for stand-alone light mode,
 - RTC is synchronized from NTP daily,
 - HA exposes a manual sync button.
@@ -644,19 +722,27 @@ A previous isolated test confirmed that a sensor entity can be used successfully
 ## 14. Suggested pin map
 
 ```text
-D2   DS3231 INT/SQW
-D3   IR LED output
-D5   water level frequency input
-D6   shared fan PWM output, inverted driver
-D9   fan 1 tach input
-D10  fan 2 tach input
-D11  pump relay control
-A0   NTC water temperature
-A4   I2C SDA
-A5   I2C SCL
+D2   DS3231 INT/SQW                 INPUT_PULLUP
+D3   IR LED driver                  OUTPUT / handled by IRremote
+D4   TCS34725 LED control           OUTPUT, default LOW = LED off, HIGH = LED on
+D5   water level frequency input    INPUT_PULLUP
+D6   shared fan PWM driver          OUTPUT, inverted through 2N3904
+D7   TCS34725 INT                   INPUT_PULLUP, open-drain, optional / prepared
+D8   DS3231 32kHz output            INPUT_PULLUP, optional / prepared
+D9   fan 1 tach                     INPUT, external 10 kΩ pull-up to 3.3 V
+D10  fan 2 tach                     INPUT, external 10 kΩ pull-up to 3.3 V
+D11  pump relay control             OUTPUT, safe default pump off
+A0   NTC water temperature          analog input
+A4   I2C SDA                        DS3231 / AT24C32 / SHT45 / TCS34725
+A5   I2C SCL                        DS3231 / AT24C32 / SHT45 / TCS34725
 ```
 
-Pin assignments must be verified against the final hardware layout before implementation.
+This is the current intended pin map. Pin assignments may change only through an explicit design update.
+
+General hardware note:
+
+- all logic signals connected directly to the Nano 33 IoT must be 3.3 V compatible,
+- I2C module supply and pull-ups must not expose Nano pins to 5 V unless proper level shifting or isolation is used.
 
 ## 15. Documentation-first implementation rule
 
@@ -668,7 +754,8 @@ Before firmware implementation, generate and review:
 - `AGENTS.md`,
 - `libraries.txt`,
 - `HA_DASHBOARD.md`,
-- `HA_AUTOMATIONS.md`,
-- `Credentials.example.h`.
+- `HA_AUTOMATIONS.md`.
+
+`Credentials.example.h` is created together with the first WiFi/MQTT implementation. It should contain only credentials that are actually needed by the implemented connectivity layer. Until connectivity code exists, credential fields should not be guessed.
 
 Firmware implementation starts only after the documentation is accepted.

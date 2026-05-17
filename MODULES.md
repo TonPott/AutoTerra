@@ -115,6 +115,8 @@ Debug output is useful for development but cannot be required for normal operati
 Responsibilities:
 
 - initialize DS3231,
+- own DS3231 INT/SQW on D2,
+- reserve and prepare DS3231 32kHz input on D8,
 - read current time,
 - configure two DS3231 alarms for stand-alone light mode,
 - read and clear alarm flags,
@@ -124,6 +126,8 @@ Responsibilities:
 The RTC alarm line uses `INPUT_PULLUP`.
 
 The DS3231 alarms are only for stand-alone mode.
+
+The DS3231 32kHz input on D8 is optional and prepared only. `RtcClock` shall not attach a 32kHz interrupt in v1 and shall keep 32kHz handling optional.
 
 ## 7. `TimeSync.*`
 
@@ -268,6 +272,10 @@ HA schedule behavior:
 Responsibilities:
 
 - initialize TCS34725,
+- own TCS34725 LED control on D4,
+- initialize D4 as `OUTPUT` and set it LOW by default so the module LED is off,
+- optionally use the LED later during controlled measurement modes,
+- prepare D7 as optional INT input using `INPUT_PULLUP` because the INT output is open-drain,
 - read Clear raw value,
 - optionally read RGB, lux, and color temperature,
 - perform on/off verification,
@@ -286,6 +294,8 @@ Events to measure:
 - fade start,
 - target preset reached,
 - light mode change.
+
+v1 does not depend on the TCS34725 INT pin; periodic and event-triggered measurements are sufficient.
 
 ## 16. `Sht45Sensor.*`
 
@@ -339,10 +349,12 @@ Normal publication:
 
 - water level in mm.
 
-Optional diagnostics:
+Optional diagnostics during setup, calibration, or troubleshooting:
 
 - level,
 - raw frequency.
+
+The normal user-facing Home Assistant value is water level in mm. Internal level and raw frequency are not required for the regular dashboard unless calibration or troubleshooting requires them.
 
 PumpSafety consumes raw or classified level for safety decisions.
 
@@ -369,8 +381,15 @@ Persistent values:
 
 Important:
 
-- PWM driver is inverting.
-- tach pull-ups are external 10 kΩ.
+- PWM is output on D6 through an inverting 2N3904 NPN transistor stage.
+- D6 drives the transistor base through a 2.2 kΩ resistor; the shared fan PWM node is the transistor collector.
+- The blue PWM wires of both fans share the collector node with an external 2.2 kΩ pull-up to +5 V.
+- The 5 V fan PWM node must not be directly connected to a Nano GPIO.
+- inversion handling belongs inside `FanControl`.
+- tach pull-ups are separate external 10 kΩ resistors to 3.3 V, one per tach input.
+- fan 1 tach uses D9 and fan 2 tach uses D10.
+- tach signals must not be tied together and must not use 5 V pull-ups.
+- RPM calculation should assume two pulses per revolution unless hardware testing proves otherwise.
 - one RPM table will be provided later for both fans.
 
 ## 20. `PumpSafety.*`

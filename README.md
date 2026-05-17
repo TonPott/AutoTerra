@@ -52,7 +52,7 @@ Main external modules:
 - B3950 10K NTC thermistor for water temperature
 - CQRobot multi-point photoelectric liquid level sensor with frequency output
 - CQRobot/Adafruit-compatible TCS34725 light/color sensor
-- two Noctua NF-A4x20 5V PWM fans
+- two Noctua NF-A4x20 5V PWM fans with a shared transistor-buffered PWM line and separate tach inputs
 - pump relay module using 3.3 V logic
 - IR LED driver circuit for the remote-controlled lamp
 
@@ -63,6 +63,8 @@ Main external modules:
 - `entity-model.md` - Home Assistant entity model
 - `HA_DASHBOARD.md` - initial dashboard design ideas
 - `HA_AUTOMATIONS.md` - Home Assistant automation responsibilities
+- `ROADMAP.md` - open tasks, validation work, risks, and implementation phases
+- `DECISIONS.md` - accepted design decisions and rationale
 - `AGENTS.md` - Codex working rules for this repository
 - `libraries.txt` - required Arduino libraries and their roles
 
