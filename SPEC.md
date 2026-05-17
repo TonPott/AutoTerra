@@ -181,6 +181,19 @@ Required tables:
 
 A TCS34725 light/color sensor is used to verify whether the lamp is broadly on or off.
 
+The AngelTCS34725US / TCS34725FN module is connected through I2C and power, and also uses prepared optional signal pins:
+
+- TCS34725 LED control is wired to Arduino D4,
+- D4 shall be configured as `OUTPUT`,
+- D4 LOW means sensor LED off,
+- D4 HIGH means sensor LED on,
+- the default firmware state shall keep the sensor LED off unless a measurement mode explicitly enables it,
+- normal light on/off verification shall use a defined LED state, initially LED off,
+- TCS34725 INT is wired to Arduino D7 and prepared for optional future use,
+- the TCS34725 INT output is open-drain,
+- D7 shall be configured as `INPUT_PULLUP`,
+- TCS34725 INT is not required for v1 logic; v1 uses periodic and event-triggered measurements.
+
 First firmware version:
 
 - no full color validation,
@@ -434,7 +447,7 @@ Level 4:       400 Hz
 
 The sensor shall be read using a digital interrupt-capable input with INPUT_PULLUP.
 
-The suggested pin is **D5**, because D2 is used for RTC interrupt and D3 is used for IR.
+The assigned pin is **D5**, because D2 is used for RTC interrupt and D3 is used for IR.
 
 ### 8.2 Measurement and publication
 
@@ -515,7 +528,12 @@ The DS3231 provides local time and two alarms.
 Requirements:
 
 - DS3231 INT/SQW pin uses INPUT_PULLUP,
-- suggested pin: D2,
+- assigned pin: D2,
+- DS3231 INT/SQW remains on D2 and is used for stand-alone alarm triggers,
+- DS3231 32kHz output is wired to Arduino D8 and prepared for optional future use,
+- D8 shall be configured as INPUT_PULLUP,
+- the 32kHz signal is not used by v1 logic and no interrupt shall be attached by default,
+- if 32kHz is enabled later, it must be handled carefully because it is a high-frequency signal,
 - alarms are used for stand-alone light mode,
 - RTC is synchronized from NTP daily,
 - HA exposes a manual sync button.
@@ -704,19 +722,27 @@ A previous isolated test confirmed that a sensor entity can be used successfully
 ## 14. Suggested pin map
 
 ```text
-D2   DS3231 INT/SQW
-D3   IR LED output
-D5   water level frequency input
-D6   shared fan PWM output to 2N3904 inverting driver
-D9   fan 1 tach input with external 10 kΩ pull-up to 3.3 V
-D10  fan 2 tach input with external 10 kΩ pull-up to 3.3 V
-D11  pump relay control
-A0   NTC water temperature
-A4   I2C SDA
-A5   I2C SCL
+D2   DS3231 INT/SQW                 INPUT_PULLUP
+D3   IR LED driver                  OUTPUT / handled by IRremote
+D4   TCS34725 LED control           OUTPUT, default LOW = LED off, HIGH = LED on
+D5   water level frequency input    INPUT_PULLUP
+D6   shared fan PWM driver          OUTPUT, inverted through 2N3904
+D7   TCS34725 INT                   INPUT_PULLUP, open-drain, optional / prepared
+D8   DS3231 32kHz output            INPUT_PULLUP, optional / prepared
+D9   fan 1 tach                     INPUT, external 10 kΩ pull-up to 3.3 V
+D10  fan 2 tach                     INPUT, external 10 kΩ pull-up to 3.3 V
+D11  pump relay control             OUTPUT, safe default pump off
+A0   NTC water temperature          analog input
+A4   I2C SDA                        DS3231 / AT24C32 / SHT45 / TCS34725
+A5   I2C SCL                        DS3231 / AT24C32 / SHT45 / TCS34725
 ```
 
 This is the current intended pin map. Pin assignments may change only through an explicit design update.
+
+General hardware note:
+
+- all logic signals connected directly to the Nano 33 IoT must be 3.3 V compatible,
+- I2C module supply and pull-ups must not expose Nano pins to 5 V unless proper level shifting or isolation is used.
 
 ## 15. Documentation-first implementation rule
 

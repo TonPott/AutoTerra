@@ -70,10 +70,15 @@ This repository contains the Arduino firmware documentation and later the firmwa
 - Do not reintroduce NeoPixel alert output.
 - IR output remains on D3 unless the pin assignment is explicitly changed.
 - DS3231 INT/SQW is intended for D2.
+- D4 is reserved for TCS34725 LED control; D4 LOW means TCS34725 LED off and D4 HIGH means LED on.
 - The water level sensor is a frequency output, not I²C; D5 is the intended input.
 - The fan PWM driver is inverting; internal logic always works with effective fan percent.
 - Fan PWM is driven through an inverting 2N3904 transistor stage from D6; the shared fan PWM node uses a 2.2 kΩ pull-up to +5 V and must not be driven directly by the Nano GPIO.
+- D7 is reserved for optional TCS34725 INT and shall use `INPUT_PULLUP` because the INT output is open-drain.
+- D8 is reserved for optional DS3231 32kHz output and shall use `INPUT_PULLUP`.
 - Tach inputs are separate per fan and use external 10 kΩ pull-ups to 3.3 V.
+- Do not move D4, D7, or D8 unless explicitly requested.
+- Do not attach interrupts to the DS3231 32kHz input in v1.
 
 ## Documentation rules
 

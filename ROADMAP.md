@@ -25,6 +25,10 @@ It does not redefine current requirements. The target behavior remains documente
 - Validate that the selected ArduinoHA entity types work as expected for fan, select, number, binary sensor, button, switch, and text-like sensor output.
 - Validate DS3231 alarm support in RTClib; if incomplete, plan direct register handling inside `RtcClock`.
 - Confirm the final pin map against the real hardware layout before firmware implementation.
+- Verify whether normal light verification should run with the TCS34725 LED off, on, or in a controlled measurement sequence.
+- Verify TCS34725 INT behavior on D7 if future threshold or interrupt use is desired.
+- Verify DS3231 32kHz output behavior on D8 before using it for timing or diagnostics.
+- Confirm that no connected module exposes Nano 33 IoT pins to 5 V logic levels.
 - Revisit `NTC_Thermistor` version selection when version 2.1.1 or later is available through Arduino Library Manager.
 - Create `Credentials.example.h` together with the first WiFi/MQTT implementation.
 - Ensure `Credentials.example.h` contains only credentials that are actually needed by the implemented connectivity layer.

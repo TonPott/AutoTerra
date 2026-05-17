@@ -115,6 +115,8 @@ Debug output is useful for development but cannot be required for normal operati
 Responsibilities:
 
 - initialize DS3231,
+- own DS3231 INT/SQW on D2,
+- reserve and prepare DS3231 32kHz input on D8,
 - read current time,
 - configure two DS3231 alarms for stand-alone light mode,
 - read and clear alarm flags,
@@ -124,6 +126,8 @@ Responsibilities:
 The RTC alarm line uses `INPUT_PULLUP`.
 
 The DS3231 alarms are only for stand-alone mode.
+
+The DS3231 32kHz input on D8 is optional and prepared only. `RtcClock` shall not attach a 32kHz interrupt in v1 and shall keep 32kHz handling optional.
 
 ## 7. `TimeSync.*`
 
@@ -268,6 +272,10 @@ HA schedule behavior:
 Responsibilities:
 
 - initialize TCS34725,
+- own TCS34725 LED control on D4,
+- initialize D4 as `OUTPUT` and set it LOW by default so the module LED is off,
+- optionally use the LED later during controlled measurement modes,
+- prepare D7 as optional INT input using `INPUT_PULLUP` because the INT output is open-drain,
 - read Clear raw value,
 - optionally read RGB, lux, and color temperature,
 - perform on/off verification,
@@ -286,6 +294,8 @@ Events to measure:
 - fade start,
 - target preset reached,
 - light mode change.
+
+v1 does not depend on the TCS34725 INT pin; periodic and event-triggered measurements are sufficient.
 
 ## 16. `Sht45Sensor.*`
 

@@ -265,6 +265,20 @@ The exact credential structure should follow the actual WiFi and MQTT implementa
 Consequences:
 Documentation may mention the planned credentials example, but this documentation-only phase does not need to create it yet. The file should contain only credentials that are actually needed by the implemented connectivity layer.
 
+## 2026-05-17 – Optional TCS34725 and DS3231 signal lines are wired and reserved from the start
+
+Status:
+Accepted
+
+Decision:
+Optional TCS34725 LED/INT and DS3231 32kHz lines are wired and reserved from the start. D4 is TCS34725 LED control with LOW = LED off and HIGH = LED on. D7 is TCS34725 INT prepared input with `INPUT_PULLUP` because INT is open-drain. D8 is DS3231 32kHz prepared input with `INPUT_PULLUP`.
+
+Reason:
+Wiring optional signals from the start avoids later rewiring if these functions become useful during calibration, diagnostics, or future firmware versions.
+
+Consequences:
+These functions may be initialized safely even when not actively used in v1. TCS34725 INT and DS3231 32kHz remain optional prepared inputs; v1 does not depend on them.
+
 ## Superseded decisions
 
 No superseded decisions are recorded yet.
