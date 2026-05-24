@@ -2,12 +2,12 @@
 
 This document describes the intended firmware modules for the Terrarium controller.
 
-The goal is clear module boundaries. `AutoTerra.ino` should coordinate modules but not contain hardware or business logic.
+The goal is clear module boundaries. `AutoTerraController.ino` should coordinate modules but not contain hardware or business logic.
 
 ## 1. Module overview
 
 ```text
-AutoTerra.ino
+sketches/AutoTerraController/AutoTerraController.ino
 
 Config.h / Config.cpp
 Types.h
@@ -36,7 +36,7 @@ WiFiManager.h / WiFiManager.cpp
 HomeAssistantBridge.h / HomeAssistantBridge.cpp
 ```
 
-## 2. `AutoTerra.ino`
+## 2. `AutoTerraController.ino`
 
 Responsibilities:
 
@@ -46,7 +46,7 @@ Responsibilities:
 - keep loop non-blocking,
 - avoid hardware-specific logic.
 
-`AutoTerra.ino` shall not:
+`AutoTerraController.ino` shall not:
 
 - directly parse Home Assistant commands,
 - directly read sensors except for temporary diagnostics,

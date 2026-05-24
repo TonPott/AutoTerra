@@ -15,10 +15,12 @@ Hardware tests normally run locally on real hardware. They can document expected
 
 ## Compile checks
 
-Root firmware compile:
+Root/default production compile:
 
 - Windows: `.\scripts\check-arduino.ps1`
 - Linux/macOS: `./scripts/check-arduino.sh`
+
+The default sketch is `sketches/AutoTerraController`.
 
 Hardware test compile:
 

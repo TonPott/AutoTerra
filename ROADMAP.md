@@ -36,7 +36,7 @@ It does not redefine current requirements. The target behavior remains documente
 
 ## Firmware implementation phases
 
-- Phase 1: compileable project skeleton.
+- Phase 1: compileable project skeleton under `sketches/AutoTerraController/`.
 - Phase 2: infrastructure modules: Debug, Config, Types, TimeSync, Persistence.
 - Phase 3: sensor modules: SHT45, NTC, LiquidSensor, TCS34725.
 - Phase 4: actuator modules: IRControl, Fade, LightRuntime, FanControl, PumpSafety.
