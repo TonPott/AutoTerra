@@ -91,11 +91,19 @@ function Assert-ArduinoToolchainPrepared {
         @{ Name = "IRremote"; Version = "4.7.1" }
     )
 
+    $InstalledLibrariesJson = arduino-cli lib list --json 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        throw $ToolchainMissingMessage
+    }
+
+    $InstalledLibraries = ($InstalledLibrariesJson | ConvertFrom-Json).installed_libraries
+
     foreach ($Library in $RequiredLibraries) {
-        $LibraryName = $Library.Name
-        $LibraryVersion = $Library.Version
-        $LibraryList = arduino-cli lib list $LibraryName 2>$null
-        if ($LASTEXITCODE -ne 0 -or -not ($LibraryList -match [regex]::Escape($LibraryVersion))) {
+        $MatchingLibrary = $InstalledLibraries | Where-Object {
+            $_.library.name -eq $Library.Name -and $_.library.version -eq $Library.Version
+        } | Select-Object -First 1
+
+        if (-not $MatchingLibrary) {
             throw $ToolchainMissingMessage
         }
     }

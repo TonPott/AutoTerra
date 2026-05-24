@@ -82,11 +82,32 @@ assert_arduino_toolchain_prepared() {
     "IRremote|4.7.1"
   )
 
+  local installed_libraries_json
+  installed_libraries_json="$(arduino-cli lib list --json 2>/dev/null)" || {
+    echo "$TOOLCHAIN_MISSING_MESSAGE" >&2
+    exit 1
+  }
+
   local entry name version
   for entry in "${required_libraries[@]}"; do
     name="${entry%%|*}"
     version="${entry##*|}"
-    if ! arduino-cli lib list "$name" 2>/dev/null | grep -Fq "$version"; then
+    if ! printf '%s\n' "$installed_libraries_json" | awk -v expected_name="$name" -v expected_version="$version" '
+      /"name":/ {
+        current_name = $0
+        sub(/^[[:space:]]*"name":[[:space:]]*"/, "", current_name)
+        sub(/",[[:space:]]*$/, "", current_name)
+      }
+      /"version":/ {
+        current_version = $0
+        sub(/^[[:space:]]*"version":[[:space:]]*"/, "", current_version)
+        sub(/",[[:space:]]*$/, "", current_version)
+        if (current_name == expected_name && current_version == expected_version) {
+          found = 1
+        }
+      }
+      END { exit found ? 0 : 1 }
+    '; then
       echo "$TOOLCHAIN_MISSING_MESSAGE" >&2
       exit 1
     fi
