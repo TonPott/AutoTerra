@@ -68,6 +68,7 @@ Main external modules:
 - `DECISIONS.md` - accepted design decisions and rationale
 - `AGENTS.md` - Codex working rules for this repository
 - `libraries.txt` - required Arduino libraries and their roles
+- `hardware-tests/` - manual hardware validation sketches and test documentation
 
 ## Important Design Decisions
 

@@ -46,6 +46,7 @@ It does not redefine current requirements. The target behavior remains documente
 
 ## Hardware validation tasks
 
+- Manual hardware validation sketches and test documentation live under [`hardware-tests/`](hardware-tests/README.md).
 - Measure minimum reliable PWM percentage for the Noctua fans.
 - Provide and later integrate the final PWM-to-RPM calibration table.
 - Test fan tach readings with separate external 10 kΩ pull-ups to 3.3 V.

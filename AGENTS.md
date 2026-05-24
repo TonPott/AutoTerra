@@ -34,6 +34,13 @@ This repository contains the Arduino firmware documentation and later the firmwa
 - Prefer `millis()`-based scheduling.
 - Keep debug output behind a compile-time debug flag and never persist debug state.
 
+## Hardware tests
+
+- Hardware test sketches live under `hardware-tests/`.
+- Hardware tests must stay separate from production firmware modules.
+- A hardware test must document wiring, expected Serial output, and safety notes before implementation.
+- Test findings that affect requirements must be copied back into `SPEC.md`, `HARDWARE.md`, `ROADMAP.md`, or `DECISIONS.md`.
+
 ## Home Assistant / MQTT
 
 - For v1, use `arduino-home-assistant`, provided by the `home-assistant-integration` library.
