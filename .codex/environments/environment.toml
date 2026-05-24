@@ -14,6 +14,12 @@ script = "scripts/setup-arduino.sh"
 [setup.win32]
 script = ".\\scripts\\setup-arduino.ps1"
 
+[cleanup]
+script = ""
+
+[cleanup.win32]
+script = "powershell -ExecutionPolicy Bypass -File .\\scripts\\cleanup-worktree.ps1"
+
 [[actions]]
 name = "Arduino Compile Win"
 icon = "test"
