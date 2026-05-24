@@ -53,7 +53,8 @@ It does not redefine current requirements. The target behavior remains documente
 - Evaluate the 6-hour stabilization rule with the real water surface behavior.
 - Test the immediate pump cutoff at the `without liquid` level.
 - Test the TCS34725 Clear-channel light on/off detection in the actual room.
-- Test NTC readings with the chosen 8.2 kΩ pull-down resistor.
+- Test NTC readings with the chosen 8.2 kΩ reference resistor voltage divider.
+- Evaluate analog reference strategy only if NTC readings show unacceptable noise or drift.
 - Confirm relay module wiring and mains safety outside firmware scope.
 
 ## Home Assistant validation tasks

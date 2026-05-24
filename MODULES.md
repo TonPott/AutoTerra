@@ -331,7 +331,7 @@ Responsibilities:
 - detect implausible values if possible,
 - report availability/fault.
 
-A0 is the suggested analog input.
+A0 is the assigned analog input. Divider topology, resistor value, and analog wiring are documented in `HARDWARE.md`.
 
 ## 18. `LiquidSensor.*`
 

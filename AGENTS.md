@@ -86,6 +86,9 @@ This repository contains the Arduino firmware documentation and later the firmwa
 - Update `MODULES.md` when module responsibilities change.
 - Update `entity-model.md` when Home Assistant entities change.
 - Update `libraries.txt` and `sketch.yaml` together when dependencies change.
+- `HARDWARE.md` is the central place for physical wiring, pin map, power domains, and signal-level notes.
+- If pin assignments or wiring change, update `HARDWARE.md` together with `SPEC.md` and `MODULES.md`.
+- Do not scatter wiring-only details only across module documents.
 - Open tasks, validation work, known risks, and deferred decisions belong in `ROADMAP.md`.
 - Accepted design rationale belongs in `DECISIONS.md`.
 - Requirement documents should describe the current target state and should not be cluttered with implementation TODOs unless the uncertainty is itself part of the requirement.
