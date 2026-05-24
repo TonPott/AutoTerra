@@ -1,4 +1,7 @@
 .arduino/
+.arduino-cache/
+.build/
+.local/
 build/
 *.bin
 *.elf
