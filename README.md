@@ -18,7 +18,7 @@ Production firmware should not be implemented until the documentation set has be
 - `HA_AUTOMATIONS.md`
 - `AGENTS.md`
 
-`AutoTerra.ino` is only a compileable placeholder at this stage.
+The production firmware sketch lives under `sketches/AutoTerraController/` and is only a compileable placeholder at this stage.
 
 ## Main Goals
 
@@ -68,6 +68,7 @@ Main external modules:
 - `DECISIONS.md` - accepted design decisions and rationale
 - `AGENTS.md` - Codex working rules for this repository
 - `libraries.txt` - required Arduino libraries and their roles
+- `sketches/AutoTerraController/` - production firmware sketch and Arduino profile
 - `hardware-tests/` - manual hardware validation sketches and test documentation
 
 ## Important Design Decisions
@@ -94,7 +95,7 @@ Linux / Codex Cloud / GitHub Actions:
 ./scripts/setup-arduino.sh
 ```
 
-The setup scripts prepare Arduino CLI, the Nano 33 IoT core, and the libraries listed in `sketch.yaml`.
+The setup scripts prepare Arduino CLI, the Nano 33 IoT core, and the libraries listed in `sketches/AutoTerraController/sketch.yaml`.
 
 ## Compile Check
 
@@ -111,6 +112,7 @@ Linux / Codex Cloud / GitHub Actions:
 ```
 
 The active Arduino profile is `nano33iot` and targets `arduino:samd:nano_33_iot`.
+Root compile checks use `sketches/AutoTerraController/` as the default production sketch. Hardware test sketches remain under `hardware-tests/` and can be compiled by setting `SKETCH=hardware-tests/<test-folder>`.
 
 ## Build Order
 
