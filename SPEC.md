@@ -415,10 +415,8 @@ A B3950 10K NTC thermistor measures water temperature.
 
 Requirements:
 
-- connected to analog input,
-- voltage divider topology,
-- 8.2 kΩ reference resistor from 3.3 V to A0,
-- B3950 10K NTC from A0 to GND,
+- connected to A0 analog input,
+- B3950 10K NTC voltage divider documented in `HARDWARE.md`,
 - nominal thermistor resistance: 10 kΩ,
 - B value: 3950,
 - nominal temperature: 25 °C,
@@ -429,14 +427,6 @@ Requirements:
   - Kelvin.
 
 The frontend later decides which value is displayed.
-
-Wiring:
-
-```text
-3.3 V -> 8.2 kΩ -> A0 -> B3950 NTC -> GND
-```
-
-The 8.2 kΩ resistor is the upper reference leg, and the NTC is the lower leg to GND.
 
 ## 8. Water level
 
@@ -751,6 +741,7 @@ This is the current intended pin map. Pin assignments may change only through an
 General hardware note:
 
 - all logic signals connected directly to the Nano 33 IoT must be 3.3 V compatible,
+- I2C bus must be 3.3 V safe and must have effective pull-ups to 3.3 V,
 - I2C module supply and pull-ups must not expose Nano pins to 5 V unless proper level shifting or isolation is used.
 
 ## 15. Documentation-first implementation rule

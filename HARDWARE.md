@@ -20,6 +20,7 @@ The Arduino performs local hardware control and safety logic. Home Assistant pro
 - All grounds must be common: supply GND, Nano GND, fan grounds, sensor grounds, relay module ground, and transistor emitter ground.
 - Nano 33 IoT logic is 3.3 V.
 - All signals connected directly to Nano pins must be 3.3 V compatible.
+- SDA and SCL require effective pull-ups to 3.3 V.
 - I2C pull-ups must not expose Nano pins to 5 V.
 - The fan PWM line may be pulled up to 5 V only because it is isolated from the Nano GPIO by the 2N3904 transistor collector node.
 - Fan tach pull-ups must go to 3.3 V.
@@ -55,7 +56,14 @@ Devices on the bus:
 
 I2C addresses are finalized during hardware and module tests. The SHT45 address is intentionally hardcoded later.
 
-The bus must remain 3.3 V safe for the Nano 33 IoT. I2C module supply and pull-ups must not expose Nano pins to 5 V unless proper level shifting or isolation is used.
+The bus must remain 3.3 V safe for the Nano 33 IoT.
+
+- SDA and SCL require effective pull-ups to 3.3 V.
+- The pull-ups may be provided by verified onboard module pull-ups or by external resistors.
+- Do not use pull-ups to 5 V on SDA or SCL.
+- If multiple breakout boards provide onboard pull-ups, verify the resulting effective pull-up resistance.
+- External 4.7 kΩ pull-ups to 3.3 V are a typical starting point only if the bus does not already have suitable pull-ups.
+- I2C module supply and pull-ups must not expose Nano pins to 5 V unless proper level shifting or isolation is used.
 
 ## Module wiring overview
 
@@ -138,9 +146,12 @@ The AngelTCS34725US / TCS34725FN module uses I2C plus LED and INT pins:
 
 - B3950 10K NTC connects to A0 through a voltage divider.
 - The divider uses an 8.2 kΩ upper reference resistor from 3.3 V to A0.
+- The NTC divider is powered from the Nano 3.3 V domain.
 - Nominal thermistor resistance is 10 kΩ.
 - B value is 3950.
 - Nominal temperature is 25 °C.
+- AREF is not connected in v1.
+- Do not connect an external 3.3 V reference to AREF unless the firmware explicitly configures and validates external analog reference use.
 
 Wiring:
 
@@ -161,7 +172,9 @@ The 8.2 kΩ resistor is the upper reference leg, and the NTC is the lower leg to
 
 - Nano 33 IoT GPIO is 3.3 V logic.
 - Direct Nano inputs must not be pulled to 5 V.
-- I2C pull-ups must be 3.3 V safe.
+- SDA and SCL require effective pull-ups to 3.3 V.
+- I2C pull-ups must be 3.3 V safe and must not pull SDA or SCL to 5 V.
+- External 4.7 kΩ pull-ups to 3.3 V are only a typical starting point when suitable onboard pull-ups are not already present.
 - Fan tach pull-ups must be 3.3 V.
 - Fan PWM pull-up may be 5 V only at the isolated transistor collector / fan PWM node.
 - All grounds must be common.
