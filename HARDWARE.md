@@ -54,7 +54,25 @@ Devices on the bus:
 - SHT45 air temperature and humidity sensor
 - TCS34725 light/color sensor
 
-I2C addresses are finalized during hardware and module tests. The SHT45 address is intentionally hardcoded later.
+I2C addresses are validated during hardware and module tests. The SHT45 address may still be hardcoded in firmware later, but the tested hardware confirmed `0x44`.
+
+### Confirmed I2C scan result
+
+A manual I2C scan confirmed the expected external AutoTerra devices.
+
+Confirmed external devices:
+
+- `0x29` TCS34725 color/light sensor
+- `0x44` SHT45 / SHT4x air temperature and humidity sensor
+- `0x57` AT24C32 EEPROM
+- `0x68` DS3231 RTC
+
+Additional addresses seen on the Nano 33 IoT:
+
+- `0x60` likely onboard ATECC608A secure element
+- `0x6A` likely onboard LSM6DS3 IMU
+
+These onboard addresses are expected on the Nano 33 IoT and should not be mistaken for extra external AutoTerra modules.
 
 The bus must remain 3.3 V safe for the Nano 33 IoT.
 
@@ -70,7 +88,7 @@ The bus must remain 3.3 V safe for the Nano 33 IoT.
 | Module | Power | Signal pins | Notes |
 |---|---|---|---|
 | DS3231 + AT24C32 | 3.3 V safe module supply | A4 SDA, A5 SCL, D2 INT/SQW, D8 32kHz optional | RTC alarms use D2. AT24C32 shares I2C. D8 is prepared only. |
-| SHT45 | 3.3 V safe module supply | A4 SDA, A5 SCL | Air temperature and humidity. Address is hardcoded later. |
+| SHT45 | 3.3 V safe module supply | A4 SDA, A5 SCL | Air temperature and humidity. Tested hardware confirmed address `0x44`; firmware may hardcode it later. |
 | TCS34725 AngelTCS34725US / TCS34725FN | 3.3 V safe module supply | A4 SDA, A5 SCL, D4 LED, D7 INT optional | D4 LOW = LED off, HIGH = LED on. INT is open-drain and uses INPUT_PULLUP. |
 | B3950 10K NTC | 3.3 V divider supply | A0 | 3.3 V -> 8.2 kΩ reference resistor -> A0 -> B3950 NTC -> GND. |
 | CQRobot multi-point liquid level sensor | Sensor supply per module requirements, output must be 3.3 V safe | D5 | Frequency-output sensor, not I2C. D5 uses INPUT_PULLUP. |
