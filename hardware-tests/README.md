@@ -15,6 +15,10 @@ Hardware tests normally run locally on real hardware. They can document expected
 
 ## Compile checks
 
+Run `scripts/setup-arduino` once per local machine before compile checks. All
+AutoTerra worktrees reuse the same shared Arduino CLI toolchain. Normal compile
+checks should not download, install, or update Arduino cores or libraries.
+
 Root/default production compile:
 
 - Windows: `.\scripts\check-arduino.ps1`
@@ -32,6 +36,18 @@ Hardware test compile:
 Hardware test folders normally do not contain their own `sketch.yaml`; therefore the scripts compile them with `--fqbn arduino:samd:nano_33_iot`.
 
 If a future test needs its own profile, add a local `sketch.yaml` to that test folder deliberately.
+
+If a compile check reports that the Arduino toolchain is not prepared, run the
+setup script once:
+
+- Windows: `.\scripts\setup-arduino.ps1`
+- Linux/macOS: `./scripts/setup-arduino.sh`
+
+Set `AUTOTERRA_ARDUINO_HOME` to override the default shared toolchain location.
+Worktree-local generated files can be removed with `.\scripts\cleanup-worktree.ps1`
+or `./scripts/cleanup-worktree.sh`. Automatic Codex cleanup should not run
+`cleanup-arduino-toolchain`; that manual script removes the shared toolchain and
+requires downloads during the next setup.
 
 ## Planned test order
 

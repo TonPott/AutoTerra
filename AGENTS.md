@@ -123,6 +123,18 @@ Linux / Codex Cloud / GitHub Actions:
 
 For documentation-only changes, diff review is sufficient. If build files or sketch files changed, compile.
 
+Arduino setup is a one-time local machine preparation step. Normal Codex compile
+checks must use `scripts/check-arduino` and must not run setup unless the user
+explicitly asks for setup.
+
+- `scripts/setup-arduino` may use the network to install or update the shared Arduino CLI toolchain.
+- `scripts/check-arduino` must only compile and must not install cores, install libraries, or update indexes.
+- If the toolchain is missing, report that setup is required instead of modifying dependencies.
+- All Codex worktrees reuse the shared Arduino CLI toolchain from `AUTOTERRA_ARDUINO_HOME`, or the platform default if that variable is unset.
+- Codex cleanup should only run `scripts/cleanup-worktree`, not `scripts/cleanup-arduino-toolchain`.
+- Do not delete the shared Arduino CLI toolchain automatically.
+- Do not commit generated `.local/`, `.build/`, `.arduino-cache/`, or `.arduino/` files.
+
 ## Commit rules
 
 Codex may commit only after:
