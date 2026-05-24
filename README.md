@@ -116,7 +116,8 @@ This directory is intentionally persistent across Codex worktrees.
 Compile checks should not download, install, or update anything. They generate
 an ignored worktree-local Arduino CLI config at `.local/arduino-cli.yaml` that
 points to the shared toolchain directories, then compile the selected sketch
-with explicit ignored build paths under `.build/` and `.arduino-cache/`.
+with explicit ignored build output under `.build/` and build-cache configuration
+pointing to `.arduino-cache/`.
 
 Windows:
 

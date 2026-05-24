@@ -42,10 +42,14 @@ function Initialize-ArduinoConfig {
     $DataPath = Convert-ToYamlSingleQuotedPath (Join-Path $ArduinoHome "data")
     $DownloadsPath = Convert-ToYamlSingleQuotedPath (Join-Path $ArduinoHome "downloads")
     $UserPath = Convert-ToYamlSingleQuotedPath (Join-Path $ArduinoHome "user")
+    $BuildCachePath = Convert-ToYamlSingleQuotedPath (Join-Path $RepoRoot ".arduino-cache")
 
-    @"
+@"
 board_manager:
   additional_urls: []
+
+build_cache:
+  path: $BuildCachePath
 
 directories:
   data: $DataPath
@@ -151,7 +155,7 @@ New-Item -ItemType Directory -Force -Path $BuildPath | Out-Null
 New-Item -ItemType Directory -Force -Path $BuildCachePath | Out-Null
 
 if (Test-Path (Join-Path $SketchPath "sketch.yaml")) {
-    arduino-cli compile --profile $Profile --build-path $BuildPath --build-cache-path $BuildCachePath $SketchPath
+    arduino-cli compile --profile $Profile --build-path $BuildPath $SketchPath
 } else {
-    arduino-cli compile --fqbn $Fqbn --build-path $BuildPath --build-cache-path $BuildCachePath $SketchPath
+    arduino-cli compile --fqbn $Fqbn --build-path $BuildPath $SketchPath
 }

@@ -42,6 +42,9 @@ directories:
   downloads: $(yaml_single_quote "$arduino_home/downloads")
   user: $(yaml_single_quote "$arduino_home/user")
 
+build_cache:
+  path: $(yaml_single_quote "$REPO_ROOT/.arduino-cache")
+
 library:
   enable_unsafe_install: false
 
@@ -153,7 +156,7 @@ BUILD_CACHE_PATH="$REPO_ROOT/.arduino-cache"
 mkdir -p "$BUILD_PATH" "$BUILD_CACHE_PATH"
 
 if [[ -f "$SKETCH_PATH/sketch.yaml" ]]; then
-  arduino-cli compile --profile "$PROFILE" --build-path "$BUILD_PATH" --build-cache-path "$BUILD_CACHE_PATH" "$SKETCH_PATH"
+  arduino-cli compile --profile "$PROFILE" --build-path "$BUILD_PATH" "$SKETCH_PATH"
 else
-  arduino-cli compile --fqbn "$FQBN" --build-path "$BUILD_PATH" --build-cache-path "$BUILD_CACHE_PATH" "$SKETCH_PATH"
+  arduino-cli compile --fqbn "$FQBN" --build-path "$BUILD_PATH" "$SKETCH_PATH"
 fi
