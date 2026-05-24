@@ -80,15 +80,15 @@ Exact addresses must be confirmed on the real hardware.
 
 Manual test result:
 
-| Address | Observed likely device |
+| Address | Observed result |
 |---|---|
-| `0x29` | TCS34725 color sensor |
-| `0x44` | SHT45 / SHT4x air temperature and humidity sensor |
-| `0x57` | AT24C32 EEPROM |
-| `0x60` | Onboard ATECC608A secure element on Nano 33 IoT |
-| `0x68` | DS3231 RTC |
-| `0x6A` | Onboard LSM6DS3 IMU on Nano 33 IoT |
+| `0x29` | Confirmed external TCS34725 color/light sensor |
+| `0x44` | Confirmed external SHT45 / SHT4x air temperature and humidity sensor |
+| `0x57` | Confirmed external AT24C32 EEPROM |
+| `0x60` | Likely onboard ATECC608A secure element on Nano 33 IoT |
+| `0x68` | Confirmed external DS3231 RTC |
+| `0x6A` | Likely onboard LSM6DS3 IMU on Nano 33 IoT |
 
-The expected external devices were found at the expected addresses. The SHT45 was found at `0x44`.
+The expected external I2C devices were found at the expected addresses. The SHT45 was confirmed at `0x44`.
 
-The additional `0x60` and `0x6A` devices are likely onboard devices on the Arduino Nano 33 IoT, not external AutoTerra modules.
+`0x60` and `0x6A` are expected onboard Nano 33 IoT I2C devices and are not additional external AutoTerra modules.

@@ -58,6 +58,19 @@ It does not redefine current requirements. The target behavior remains documente
 - Evaluate analog reference strategy only if NTC readings show unacceptable noise or drift.
 - Confirm relay module wiring and mains safety outside firmware scope.
 
+## Validated findings
+
+- Manual I2C bus scan completed successfully.
+- Confirmed external I2C addresses:
+  - `0x29` TCS34725 color/light sensor
+  - `0x44` SHT45 / SHT4x air temperature and humidity sensor
+  - `0x57` AT24C32 EEPROM
+  - `0x68` DS3231 RTC
+- Observed expected onboard Nano 33 IoT I2C addresses:
+  - `0x60` likely ATECC608A secure element
+  - `0x6A` likely LSM6DS3 IMU
+- I2C voltage-safety validation remains separate from the successful bus scan unless SDA/SCL levels are measured directly.
+
 ## Home Assistant validation tasks
 
 - Validate MQTT discovery behavior for all planned ArduinoHA entities.
