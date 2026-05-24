@@ -12,8 +12,14 @@ $Sketch = if ($env:SKETCH) { $env:SKETCH } else { "." }
 $Fqbn = if ($env:FQBN) { $env:FQBN } else { "arduino:samd:nano_33_iot" }
 $Profile = if ($env:PROFILE) { $env:PROFILE } else { "nano33iot" }
 
-if (Test-Path (Join-Path $RepoRoot "sketch.yaml")) {
-    arduino-cli compile --profile $Profile $Sketch
+$SketchPath = if ([System.IO.Path]::IsPathRooted($Sketch)) {
+    $Sketch
 } else {
-    arduino-cli compile --fqbn $Fqbn $Sketch
+    Join-Path $RepoRoot $Sketch
+}
+
+if (Test-Path (Join-Path $SketchPath "sketch.yaml")) {
+    arduino-cli compile --profile $Profile $SketchPath
+} else {
+    arduino-cli compile --fqbn $Fqbn $SketchPath
 }
