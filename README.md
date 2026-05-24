@@ -83,6 +83,10 @@ Main external modules:
 
 ## Local Setup
 
+Arduino CLI setup is a one-time local machine preparation step. The setup
+scripts prepare the shared Arduino CLI toolchain used by all AutoTerra
+worktrees on the same machine.
+
 Windows:
 
 ```powershell
@@ -95,9 +99,25 @@ Linux / Codex Cloud / GitHub Actions:
 ./scripts/setup-arduino.sh
 ```
 
-The setup scripts prepare Arduino CLI, the Nano 33 IoT core, and the libraries listed in `sketches/AutoTerraController/sketch.yaml`.
+The setup scripts may use the network to update Arduino indexes, install the
+Nano 33 IoT core, and install the libraries listed in
+`sketches/AutoTerraController/sketch.yaml`.
+
+By default, the shared Arduino CLI home is:
+
+- Windows: `%LOCALAPPDATA%\AutoTerra\arduino-cli`
+- Linux/macOS: `$HOME/.cache/autoterra/arduino-cli`
+
+Set `AUTOTERRA_ARDUINO_HOME` to use a different shared toolchain location.
+This directory is intentionally persistent across Codex worktrees.
 
 ## Compile Check
+
+Compile checks should not download, install, or update anything. They generate
+an ignored worktree-local Arduino CLI config at `.local/arduino-cli.yaml` that
+points to the shared toolchain directories, then compile the selected sketch
+with explicit ignored build output under `.build/` and build-cache configuration
+pointing to `.arduino-cache/`.
 
 Windows:
 
@@ -113,6 +133,52 @@ Linux / Codex Cloud / GitHub Actions:
 
 The active Arduino profile is `nano33iot` and targets `arduino:samd:nano_33_iot`.
 Root compile checks use `sketches/AutoTerraController/` as the default production sketch. Hardware test sketches remain under `hardware-tests/` and can be compiled by setting `SKETCH=hardware-tests/<test-folder>`.
+
+Windows hardware-test compile:
+
+```powershell
+$env:SKETCH = "hardware-tests/i2c-bus-scan"
+.\scripts\check-arduino.ps1
+```
+
+Linux/macOS hardware-test compile:
+
+```bash
+SKETCH=hardware-tests/i2c-bus-scan ./scripts/check-arduino.sh
+```
+
+If a compile check reports that the Arduino toolchain is not prepared, run the
+setup script once and retry the compile check.
+
+## Cleanup
+
+Worktree-local generated files can be removed safely with:
+
+```powershell
+.\scripts\cleanup-worktree.ps1
+```
+
+```bash
+./scripts/cleanup-worktree.sh
+```
+
+The Codex App cleanup script, if configured, should use only the worktree
+cleanup script. It removes `.build/`, `.arduino-cache/`, and `.local/` from the
+current worktree and does not touch the shared Arduino CLI toolchain.
+
+The shared Arduino CLI toolchain should not be removed by automatic Codex
+cleanup. For manual project-end cleanup only, remove it with:
+
+```powershell
+.\scripts\cleanup-arduino-toolchain.ps1
+```
+
+```bash
+./scripts/cleanup-arduino-toolchain.sh
+```
+
+These manual toolchain cleanup scripts ask for confirmation and warn that the
+next setup will need to download cores and libraries again.
 
 ## Build Order
 

@@ -4,6 +4,59 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+autoterra_arduino_home() {
+  if [[ -n "${AUTOTERRA_ARDUINO_HOME:-}" ]]; then
+    case "$AUTOTERRA_ARDUINO_HOME" in
+      /*) printf '%s\n' "$AUTOTERRA_ARDUINO_HOME" ;;
+      *) printf '%s\n' "$(pwd)/$AUTOTERRA_ARDUINO_HOME" ;;
+    esac
+  else
+    printf '%s\n' "$HOME/.cache/autoterra/arduino-cli"
+  fi
+}
+
+yaml_single_quote() {
+  printf "'%s'" "$(printf '%s' "$1" | sed "s/'/''/g")"
+}
+
+initialize_arduino_config() {
+  if [[ -n "${ARDUINO_CONFIG_FILE:-}" ]]; then
+    echo "Using user-provided ARDUINO_CONFIG_FILE=$ARDUINO_CONFIG_FILE"
+    return
+  fi
+
+  local arduino_home local_dir config_file
+  arduino_home="$(autoterra_arduino_home)"
+  local_dir="$REPO_ROOT/.local"
+  config_file="$local_dir/arduino-cli.yaml"
+
+  mkdir -p "$local_dir" "$arduino_home/data" "$arduino_home/downloads" "$arduino_home/user"
+
+  cat >"$config_file" <<EOF
+board_manager:
+  additional_urls: []
+
+directories:
+  data: $(yaml_single_quote "$arduino_home/data")
+  downloads: $(yaml_single_quote "$arduino_home/downloads")
+  user: $(yaml_single_quote "$arduino_home/user")
+
+build_cache:
+  path: $(yaml_single_quote "$REPO_ROOT/.arduino-cache")
+
+library:
+  enable_unsafe_install: false
+
+logging:
+  level: info
+  format: text
+EOF
+
+  export ARDUINO_CONFIG_FILE="$config_file"
+  echo "Using shared Arduino CLI home: $arduino_home"
+  echo "Generated Arduino CLI config: $config_file"
+}
+
 mkdir -p "$HOME/.local/bin"
 
 if ! command -v arduino-cli >/dev/null 2>&1; then
@@ -12,12 +65,8 @@ if ! command -v arduino-cli >/dev/null 2>&1; then
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
 
-if [[ -f "$REPO_ROOT/arduino-cli.yaml" ]]; then
-  export ARDUINO_CONFIG_FILE="$REPO_ROOT/arduino-cli.yaml"
-  echo "export ARDUINO_CONFIG_FILE=\"$REPO_ROOT/arduino-cli.yaml\"" >> "$HOME/.bashrc"
-fi
+initialize_arduino_config
 
 arduino-cli core update-index
 arduino-cli lib update-index
