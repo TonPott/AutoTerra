@@ -63,6 +63,7 @@ Main external modules:
 - `entity-model.md` - Home Assistant entity model
 - `HA_DASHBOARD.md` - initial dashboard design ideas
 - `HA_AUTOMATIONS.md` - Home Assistant automation responsibilities
+- `HARDWARE.md` - physical build, wiring, pin map, and signal-level overview
 - `ROADMAP.md` - open tasks, validation work, risks, and implementation phases
 - `DECISIONS.md` - accepted design decisions and rationale
 - `AGENTS.md` - Codex working rules for this repository

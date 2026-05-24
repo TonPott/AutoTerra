@@ -87,7 +87,7 @@ Notes:
 - Nominal resistance: 10 kΩ.
 - B value: 3950.
 - Nominal temperature: 25 °C.
-- Pull-down resistor likely 8.2 kΩ.
+- Divider topology, resistor value, and analog wiring are documented in `HARDWARE.md`.
 - `sketch.yaml` currently pins version 1.1.4 because version 2.1.0 fails to compile for `arduino:samd:nano_33_iot` due to unguarded ESP32-specific `analogReadMilliVolts()` usage.
 - Version 1.1.4 performs averaged reads with an internal delay; firmware code must account for this or re-evaluate the library before production implementation.
 

@@ -415,9 +415,8 @@ A B3950 10K NTC thermistor measures water temperature.
 
 Requirements:
 
-- connected to analog input,
-- pull-down resistor topology,
-- resistor value likely 8.2 kΩ,
+- connected to A0 analog input,
+- B3950 10K NTC voltage divider documented in `HARDWARE.md`,
 - nominal thermistor resistance: 10 kΩ,
 - B value: 3950,
 - nominal temperature: 25 °C,
@@ -742,6 +741,7 @@ This is the current intended pin map. Pin assignments may change only through an
 General hardware note:
 
 - all logic signals connected directly to the Nano 33 IoT must be 3.3 V compatible,
+- I2C bus must be 3.3 V safe and must have effective pull-ups to 3.3 V,
 - I2C module supply and pull-ups must not expose Nano pins to 5 V unless proper level shifting or isolation is used.
 
 ## 15. Documentation-first implementation rule
