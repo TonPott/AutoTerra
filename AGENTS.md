@@ -6,7 +6,7 @@ This repository contains the Arduino firmware documentation and later the firmwa
 
 - The project is currently in the design and documentation phase.
 - Before production firmware implementation starts, `SPEC.md`, `MODULES.md`, `entity-model.md`, `libraries.txt`, `HA_DASHBOARD.md`, and `HA_AUTOMATIONS.md` must be read and accepted.
-- Until then, `AutoTerra.ino` remains only a minimal compileable placeholder.
+- Until then, `sketches/AutoTerraController/AutoTerraController.ino` remains only a minimal compileable placeholder.
 - Do not implement firmware logic unless the task explicitly asks for implementation.
 
 ## Standard workflow
@@ -23,12 +23,14 @@ This repository contains the Arduino firmware documentation and later the firmwa
 
 - The only target board is Arduino Nano 33 IoT.
 - Do not add an AVR or Arduino Mega compatibility layer unless that decision is explicitly revisited.
-- `sketch.yaml` uses the `nano33iot` profile with `arduino:samd:nano_33_iot`.
+- `sketches/AutoTerraController/sketch.yaml` uses the `nano33iot` profile with `arduino:samd:nano_33_iot`.
 
 ## Firmware architecture
 
-- `AutoTerra.ino` may only orchestrate: initialize modules, call `begin()`, and call periodic `update()` methods.
-- Do not put business logic, sensor logic, EEPROM access, or Home Assistant command handling directly in `AutoTerra.ino`.
+- The production firmware sketch lives under `sketches/AutoTerraController/`.
+- Do not put production firmware directly in the repository root.
+- `AutoTerraController.ino` may only orchestrate: initialize modules, call `begin()`, and call periodic `update()` methods.
+- Do not put business logic, sensor logic, EEPROM access, or Home Assistant command handling directly in `AutoTerraController.ino`.
 - Hardware features belong in separate modules according to `MODULES.md`.
 - Do not build production logic with blocking `delay()` calls unless a library or hardware protocol explicitly requires a short wait.
 - Prefer `millis()`-based scheduling.
@@ -37,6 +39,7 @@ This repository contains the Arduino firmware documentation and later the firmwa
 ## Hardware tests
 
 - Hardware test sketches live under `hardware-tests/`.
+- Check scripts default to the production sketch but support `SKETCH=hardware-tests/<test-folder>`.
 - Hardware tests must stay separate from production firmware modules.
 - A hardware test must document wiring, expected Serial output, and safety notes before implementation.
 - Test findings that affect requirements must be copied back into `SPEC.md`, `HARDWARE.md`, `ROADMAP.md`, or `DECISIONS.md`.
@@ -92,7 +95,7 @@ This repository contains the Arduino firmware documentation and later the firmwa
 - Keep terminology consistent with `SPEC.md`.
 - Update `MODULES.md` when module responsibilities change.
 - Update `entity-model.md` when Home Assistant entities change.
-- Update `libraries.txt` and `sketch.yaml` together when dependencies change.
+- Update `libraries.txt` and `sketches/AutoTerraController/sketch.yaml` together when dependencies change.
 - `HARDWARE.md` is the central place for physical wiring, pin map, power domains, and signal-level notes.
 - If pin assignments or wiring change, update `HARDWARE.md` together with `SPEC.md` and `MODULES.md`.
 - Do not scatter wiring-only details only across module documents.

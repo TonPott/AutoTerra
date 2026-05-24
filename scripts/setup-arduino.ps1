@@ -37,8 +37,8 @@ foreach ($Library in $Libraries) {
     arduino-cli lib install $Library
 }
 
-if (Test-Path (Join-Path $RepoRoot "sketch.yaml")) {
-    arduino-cli compile --profile nano33iot .
+if (Test-Path (Join-Path $RepoRoot "sketches/AutoTerraController/sketch.yaml")) {
+    & (Join-Path $PSScriptRoot "check-arduino.ps1")
 }
 
 arduino-cli version

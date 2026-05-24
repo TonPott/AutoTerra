@@ -45,8 +45,8 @@ for library in "${libraries[@]}"; do
   arduino-cli lib install "$library"
 done
 
-if [[ -f "$REPO_ROOT/sketch.yaml" ]]; then
-  arduino-cli compile --profile nano33iot .
+if [[ -f "$REPO_ROOT/sketches/AutoTerraController/sketch.yaml" ]]; then
+  bash "$REPO_ROOT/scripts/check-arduino.sh"
 fi
 
 arduino-cli version
