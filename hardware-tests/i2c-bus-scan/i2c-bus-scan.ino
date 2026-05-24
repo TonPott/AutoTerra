@@ -26,8 +26,14 @@ void printLikelyDeviceHint(uint8_t address) {
     case 0x57:
       Serial.print(F(" - likely AT24C32 EEPROM"));
       break;
+    case 0x60:
+      Serial.print(F(" - likely onboard ATECC608A secure element on Nano 33 IoT"));
+      break;
     case 0x68:
       Serial.print(F(" - likely DS3231 RTC"));
+      break;
+    case 0x6A:
+      Serial.print(F(" - likely onboard LSM6DS3 IMU on Nano 33 IoT"));
       break;
     default:
       Serial.print(F(" - no typical AutoTerra device hint"));

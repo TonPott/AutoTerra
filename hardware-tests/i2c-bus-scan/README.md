@@ -60,7 +60,9 @@ Exact addresses must be confirmed on the real hardware.
 | `0x29` | TCS34725 color sensor |
 | `0x44` / `0x45` | SHT45 / SHT4x depending on module/address configuration |
 | `0x57` | AT24C32 EEPROM |
+| `0x60` | Onboard ATECC608A secure element on Nano 33 IoT |
 | `0x68` | DS3231 RTC |
+| `0x6A` | Onboard LSM6DS3 IMU on Nano 33 IoT |
 
 ## Expected result
 
@@ -76,4 +78,17 @@ Exact addresses must be confirmed on the real hardware.
 
 ## Result notes
 
-TODO: Add measured results after hardware test.
+Manual test result:
+
+| Address | Observed likely device |
+|---|---|
+| `0x29` | TCS34725 color sensor |
+| `0x44` | SHT45 / SHT4x air temperature and humidity sensor |
+| `0x57` | AT24C32 EEPROM |
+| `0x60` | Onboard ATECC608A secure element on Nano 33 IoT |
+| `0x68` | DS3231 RTC |
+| `0x6A` | Onboard LSM6DS3 IMU on Nano 33 IoT |
+
+The expected external devices were found at the expected addresses. The SHT45 was found at `0x44`.
+
+The additional `0x60` and `0x6A` devices are likely onboard devices on the Arduino Nano 33 IoT, not external AutoTerra modules.
