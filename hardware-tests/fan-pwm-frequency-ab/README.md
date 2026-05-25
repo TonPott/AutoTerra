@@ -162,16 +162,70 @@ after the final PWM strategy is selected.
 
 analogWrite acoustic notes:
 
-TODO: Add manual listening notes after the analogWrite upload.
+TODO: Add manual listening notes. No acoustic notes were captured in this
+Serial-only result set.
 
 25 kHz acoustic notes:
 
-TODO: Add manual listening notes after the 25 kHz upload.
+TODO: Add manual listening notes. No acoustic notes were captured in this
+Serial-only result set.
 
 RPM comparison:
 
-TODO: Paste and compare `AB_RESULT` lines from both uploads.
+The A/B test ran successfully in both compile-time modes. The approximately
+25 kHz mode used local TCC0 code and produced tach/RPM data on both fans.
+
+At the same effective percent, the approximately 25 kHz mode generally produced
+lower RPM than `analogWrite()` in the low-to-mid range and similar RPM in the
+higher range. At 100%, the approximately 25 kHz mode was slightly higher in this
+run.
+
+Low-percent behavior differed:
+
+- In `analogWrite()` mode, fan 1 started at 8% and fan 2 started at 10%.
+- In approximately 25 kHz mode, neither fan started at 8%, fan 1 started at 10%, and both fans started at 15%.
+
+Summary table:
+
+| Effective PWM | analogWrite fan 1 RPM | analogWrite fan 2 RPM | 25 kHz fan 1 RPM | 25 kHz fan 2 RPM | Notes |
+|---:|---:|---:|---:|---:|---|
+| 0% | 0.0 | 0.0 | 0.0 | 0.0 | Both modes off. |
+| 8% | 416.3 | 0.0 | 0.0 | 0.0 | Only analogWrite fan 1 moved. |
+| 10% | 393.8 | 536.2 | 442.5 | 0.0 | 25 kHz fan 2 did not start. |
+| 15% | 768.7 | 810.0 | 585.0 | 735.0 | Both modes ran both fans. |
+| 20% | 1117.5 | 1147.5 | 930.0 | 1038.7 | 25 kHz lower. |
+| 30% | 1751.2 | 1800.0 | 1638.7 | 1698.7 | 25 kHz lower. |
+| 50% | 2820.0 | 2872.5 | 2752.5 | 2782.5 | Similar, 25 kHz slightly lower. |
+| 75% | 3911.3 | 3956.3 | 3903.8 | 3922.5 | Very similar. |
+| 100% | 4886.3 | 4957.5 | 4965.0 | 5002.5 | 25 kHz slightly higher. |
+
+Raw result lines:
+
+```text
+AB_RESULT,ANALOGWRITE,0,255,0.0,0.0,0.0,0.0,0.0,0.0,
+AB_RESULT,ANALOGWRITE,8,235,416.3,0.0,405.0,435.0,0.0,0.0,
+AB_RESULT,ANALOGWRITE,10,230,393.8,536.2,390.0,405.0,465.0,690.0,
+AB_RESULT,ANALOGWRITE,15,217,768.7,810.0,750.0,780.0,810.0,810.0,
+AB_RESULT,ANALOGWRITE,20,204,1117.5,1147.5,1095.0,1140.0,1140.0,1155.0,
+AB_RESULT,ANALOGWRITE,30,179,1751.2,1800.0,1740.0,1755.0,1770.0,1815.0,
+AB_RESULT,ANALOGWRITE,50,128,2820.0,2872.5,2820.0,2820.0,2850.0,2880.0,
+AB_RESULT,ANALOGWRITE,75,64,3911.3,3956.3,3885.0,3930.0,3945.0,3975.0,
+AB_RESULT,ANALOGWRITE,100,0,4886.3,4957.5,4860.0,4920.0,4950.0,4965.0,
+
+AB_RESULT,25KHZ,0,1919,0.0,0.0,0.0,0.0,0.0,0.0,
+AB_RESULT,25KHZ,8,1768,0.0,0.0,0.0,0.0,0.0,0.0,
+AB_RESULT,25KHZ,10,1731,442.5,0.0,420.0,465.0,0.0,0.0,
+AB_RESULT,25KHZ,15,1633,585.0,735.0,570.0,600.0,660.0,885.0,
+AB_RESULT,25KHZ,20,1535,930.0,1038.7,915.0,945.0,1020.0,1050.0,
+AB_RESULT,25KHZ,30,1347,1638.7,1698.7,1620.0,1650.0,1680.0,1710.0,
+AB_RESULT,25KHZ,50,963,2752.5,2782.5,2745.0,2760.0,2775.0,2790.0,
+AB_RESULT,25KHZ,75,482,3903.8,3922.5,3885.0,3915.0,3900.0,3945.0,
+AB_RESULT,25KHZ,100,0,4965.0,5002.5,4950.0,4980.0,4980.0,5010.0,
+```
 
 Final decision:
 
-TODO: Undecided. Decide later whether analogWrite is acceptable for v1 or whether 25 kHz PWM is required.
+TODO: Undecided. The RPM comparison alone does not justify switching to 25 kHz
+for v1. Record manual acoustic notes and, if possible, measure the actual PWM
+waveform before deciding whether `analogWrite()` is acceptable or 25 kHz PWM is
+required.

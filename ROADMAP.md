@@ -83,6 +83,9 @@ It does not redefine current requirements. The target behavior remains documente
 - Observed analogWrite-based minimum startup for both fans at 10% effective PWM; fan 1 alone started at 8%, fan 2 did not.
 - Observed analogWrite-based minimum stable running for both fans at 8% effective PWM after spin-up; fan 1 alone kept running at 5%, fan 2 did not.
 - Collected 5%-step analogWrite-based RPM data from 0% through 100%; this data is documented in `hardware-tests/fan-pwm-calibration/README.md`.
+- Manual fan PWM frequency A/B test completed successfully in both `analogWrite()` and local approximately 25 kHz TCC0 modes.
+- Observed approximately 25 kHz mode producing lower RPM than `analogWrite()` through much of the low-to-mid range, similar RPM at 75%, and slightly higher RPM at 100% in the A/B run.
+- The A/B test did not include acoustic notes, so the final v1 PWM strategy decision remains open.
 - Final approximately 25 kHz PWM generation and the final PWM-to-RPM calibration table remain separate validation tasks.
 
 ## Home Assistant validation tasks
