@@ -72,6 +72,10 @@ It does not redefine current requirements. The target behavior remains documente
   - `0x60` likely ATECC608A secure element
   - `0x6A` likely LSM6DS3 IMU
 - I2C voltage-safety validation remains separate from the successful bus scan unless SDA/SCL levels are measured directly.
+- Manual fan PWM/tach `analogWrite()` bring-up completed successfully.
+- Confirmed D6 inverting fan PWM control behavior, separate D9/D10 tach interrupt readings, and plausible RPM measurements for both Noctua NF-A4x20 5V PWM fans.
+- Observed effective 0% stopping both fans after spin-down and effective 100% producing approximately 4,860-5,040 RPM across the two fans in the initial run.
+- Final approximately 25 kHz PWM generation and the final PWM-to-RPM calibration table remain separate validation tasks.
 
 ## Home Assistant validation tasks
 

@@ -101,4 +101,26 @@ build scripts.
 
 ## Result notes
 
-TODO: Add measured results after hardware test.
+Initial manual run with `analogWrite()` confirmed that D6 inversion, the shared
+PWM driver, and both separate tach inputs are functional.
+
+- Tach interrupts attached successfully on D9 and D10.
+- Effective 0% with Arduino PWM 255 stopped both fans after spin-down.
+- Tach pulses were visible during spin-down after switching from 100% to 0%.
+- Both fans responded to increasing effective PWM percentage.
+- Fan 1 and fan 2 RPM readings were measured independently.
+
+Approximate settled readings from two repeated stepped runs:
+
+| Effective fan percent | Arduino PWM written to D6 | Fan 1 settled RPM | Fan 2 settled RPM | Notes |
+|---:|---:|---:|---:|---|
+| 0% | 255 | 0 | 0 | Fans stop after spin-down. |
+| 15% | 217 | 825-840 | 855-900 | Fan 2 showed a higher transient RPM while stabilizing. |
+| 25% | 192 | 1500-1530 | 1500-1530 | Both fans settled closely together. |
+| 50% | 128 | 2865-2895 | 2895-2925 | Both fans settled closely together. |
+| 75% | 64 | 3945-3960 | 3990-4110 | Fan 2 was slightly faster in this run. |
+| 100% | 0 | 4860-5040 | 4980-5010 | Full-speed readings are plausible for the selected fans. |
+
+These readings are not the final PWM-to-RPM calibration table because this test
+uses Arduino `analogWrite()` and does not validate the final approximately
+25 kHz PWM requirement.
