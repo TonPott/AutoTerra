@@ -12,6 +12,9 @@ This is a second fan hardware test. The first bring-up sketch remains in
 [`../fan-pwm-tach/`](../fan-pwm-tach/) and is used to validate basic wiring,
 driver inversion, and tach reading.
 
+For comparing Arduino `analogWrite()` against approximately 25 kHz PWM, use the
+separate frequency A/B sketch in [`../fan-pwm-frequency-ab/`](../fan-pwm-frequency-ab/).
+
 ## Hardware under test
 
 - Two Noctua NF-A4x20 5V PWM fans

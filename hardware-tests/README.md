@@ -55,12 +55,13 @@ requires downloads during the next setup.
 2. `rtc-ds3231-at24c32`
 3. `fan-pwm-tach`
 4. `fan-pwm-calibration`
-5. `sht45`
-6. `ntc-water-temp`
-7. `liquid-sensor`
-8. `tcs34725`
-9. `pump-relay`
-10. `ir-output`
+5. `fan-pwm-frequency-ab`
+6. `sht45`
+7. `ntc-water-temp`
+8. `liquid-sensor`
+9. `tcs34725`
+10. `pump-relay`
+11. `ir-output`
 
 ## General rules
 
