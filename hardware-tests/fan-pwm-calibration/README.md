@@ -148,8 +148,10 @@ Minimum stable running percent:
 
 Acoustic noise notes:
 
-TODO: Add subjective noise notes after a dedicated acoustic check. No acoustic
-notes were captured in this Serial-only run.
+No acoustic reference profile exists yet, so subjective noise should be evaluated
+only in a direct comparison between the current `analogWrite()` control and the
+future approximately 25 kHz PWM control. No acoustic notes were captured in this
+Serial-only run.
 
 Stability notes:
 
