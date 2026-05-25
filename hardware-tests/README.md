@@ -54,12 +54,13 @@ requires downloads during the next setup.
 1. `i2c-bus-scan`
 2. `rtc-ds3231-at24c32`
 3. `fan-pwm-tach`
-4. `sht45`
-5. `ntc-water-temp`
-6. `liquid-sensor`
-7. `tcs34725`
-8. `pump-relay`
-9. `ir-output`
+4. `fan-pwm-calibration`
+5. `sht45`
+6. `ntc-water-temp`
+7. `liquid-sensor`
+8. `tcs34725`
+9. `pump-relay`
+10. `ir-output`
 
 ## General rules
 

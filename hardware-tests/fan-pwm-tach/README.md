@@ -13,6 +13,9 @@ bring-up. It does not validate the final approximately 25 kHz fan PWM
 requirement. The final SAMD21 timer setup and PWM-to-RPM calibration table remain
 separate validation tasks.
 
+For minimum startup, minimum stable running, and finer 5% step RPM data, use the
+separate calibration sketch in [`../fan-pwm-calibration/`](../fan-pwm-calibration/).
+
 ## Hardware under test
 
 - Two Noctua NF-A4x20 5V PWM fans

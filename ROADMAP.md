@@ -21,6 +21,7 @@ It does not redefine current requirements. The target behavior remains documente
 - Verify how to generate approximately 25 kHz PWM on Arduino Nano 33 IoT / SAMD21 for Noctua PWM fans.
 - Confirm that fan PWM driver inversion is handled only inside `FanControl`.
 - Use the first `hardware-tests/fan-pwm-tach` sketch to validate wiring, driver inversion, and tach reading with `analogWrite()` only.
+- Use the separate `hardware-tests/fan-pwm-calibration` sketch to collect minimum startup, minimum stable running, and 5%-step `analogWrite()` RPM data.
 - Verify final D6 timer setup and measured PWM frequency on real hardware.
 - Verify clean fan PWM signal shape with both fans connected to the shared 2N3904 collector node.
 - Validate that the selected ArduinoHA entity types work as expected for fan, select, number, binary sensor, button, switch, and text-like sensor output.
@@ -51,6 +52,7 @@ It does not redefine current requirements. The target behavior remains documente
 - Measure minimum reliable PWM percentage for the Noctua fans.
 - Provide and later integrate the final PWM-to-RPM calibration table.
 - Validate the final approximately 25 kHz fan PWM generation separately from the first `analogWrite()` fan hardware test.
+- Repeat or confirm the PWM-to-RPM calibration table after the final PWM strategy is selected.
 - Test fan tach readings with separate external 10 kΩ pull-ups to 3.3 V.
 - Test the water level sensor frequencies in the real tank.
 - Evaluate the 6-hour stabilization rule with the real water surface behavior.
