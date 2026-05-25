@@ -162,13 +162,13 @@ after the final PWM strategy is selected.
 
 analogWrite acoustic notes:
 
-TODO: Add manual listening notes. No acoustic notes were captured in this
-Serial-only result set.
+No audible difference in sound profile or volume was observed compared with the
+approximately 25 kHz mode.
 
 25 kHz acoustic notes:
 
-TODO: Add manual listening notes. No acoustic notes were captured in this
-Serial-only result set.
+No audible difference in sound profile or volume was observed compared with
+`analogWrite()` mode.
 
 RPM comparison:
 
@@ -225,7 +225,8 @@ AB_RESULT,25KHZ,100,0,4965.0,5002.5,4950.0,4980.0,4980.0,5010.0,
 
 Final decision:
 
-TODO: Undecided. The RPM comparison alone does not justify switching to 25 kHz
-for v1. Record manual acoustic notes and, if possible, measure the actual PWM
-waveform before deciding whether `analogWrite()` is acceptable or 25 kHz PWM is
-required.
+Use `analogWrite()`-based fan PWM for v1.
+
+The A/B test showed no audible advantage for approximately 25 kHz PWM. The 25 kHz
+mode also changes the PWM-to-RPM response and requires taking ownership of TCC0
+on the Nano 33 IoT, so the added complexity is not justified for v1.

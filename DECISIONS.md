@@ -181,6 +181,20 @@ The transistor stage protects the Nano GPIO from the 5 V fan PWM line, supports 
 Consequences:
 `FanControl` owns the conversion from effective fan percent to inverted PWM hardware duty. Tach inputs remain separate and use 3.3 V pull-ups to protect Nano inputs.
 
+## 2026-05-25 – Use analogWrite-based fan PWM for v1
+
+Status:
+Accepted
+
+Decision:
+AutoTerra v1 uses Arduino `analogWrite()`-based fan PWM on D6 through the inverting 2N3904 driver.
+
+Reason:
+`analogWrite()`-based PWM worked reliably with the inverting 2N3904 driver, and both fan tach inputs worked. Manual hardware tests measured minimum startup and minimum stable running values. A/B testing showed no audible difference between `analogWrite()` and approximately 25 kHz PWM. The approximately 25 kHz mode requires taking ownership of TCC0 on the Nano 33 IoT, changes the PWM-to-RPM response, and would require separate calibration.
+
+Consequences:
+The v1 fan calibration table is based on `analogWrite()` results. Custom approximately 25 kHz fan PWM remains a future option. If approximately 25 kHz PWM is enabled later, the fan calibration table must be repeated or confirmed. TCC0 ownership and IR regression testing remain relevant only if approximately 25 kHz PWM is adopted later.
+
 ## 2026-05-16 – SHT/I²C errors do not automatically force MANUAL fan mode to 100%
 
 Status:

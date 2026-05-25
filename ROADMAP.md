@@ -18,13 +18,10 @@ It does not redefine current requirements. The target behavior remains documente
 ## Pre-implementation validation tasks
 
 - Verify ArduinoHA text-like sensor behavior is already completed successfully, but keep the result documented as an accepted premise.
-- Verify how to generate approximately 25 kHz PWM on Arduino Nano 33 IoT / SAMD21 for Noctua PWM fans.
 - Confirm that fan PWM driver inversion is handled only inside `FanControl`.
 - Use the first `hardware-tests/fan-pwm-tach` sketch to validate wiring, driver inversion, and tach reading with `analogWrite()` only.
 - Use the separate `hardware-tests/fan-pwm-calibration` sketch to collect minimum startup, minimum stable running, and 5%-step `analogWrite()` RPM data.
 - Use the separate `hardware-tests/fan-pwm-frequency-ab` sketch to compare Arduino `analogWrite()` with approximately 25 kHz PWM when the local D6 timer setup is safe.
-- Verify final D6 timer setup and measured PWM frequency on real hardware.
-- Verify clean fan PWM signal shape with both fans connected to the shared 2N3904 collector node.
 - Validate that the selected ArduinoHA entity types work as expected for fan, select, number, binary sensor, button, switch, and text-like sensor output.
 - Validate DS3231 alarm support in RTClib; if incomplete, plan direct register handling inside `RtcClock`.
 - Confirm the final pin map against the real hardware layout before firmware implementation.
@@ -50,11 +47,7 @@ It does not redefine current requirements. The target behavior remains documente
 ## Hardware validation tasks
 
 - Manual hardware validation sketches and test documentation live under [`hardware-tests/`](hardware-tests/README.md).
-- Measure minimum reliable PWM percentage for the Noctua fans.
-- Provide and later integrate the final PWM-to-RPM calibration table.
-- Validate the final approximately 25 kHz fan PWM generation separately from the first `analogWrite()` fan hardware test.
-- Repeat or confirm the PWM-to-RPM calibration table after the final PWM strategy is selected.
-- Decide whether `analogWrite()` is acceptable for v1 or approximately 25 kHz PWM is required based on the fan PWM frequency A/B test, including acoustic behavior, stable operation, RPM comparison, and implementation complexity.
+- Integrate the v1 fan PWM-to-RPM calibration table from the accepted `analogWrite()` results.
 - Test fan tach readings with separate external 10 kΩ pull-ups to 3.3 V.
 - Test the water level sensor frequencies in the real tank.
 - Evaluate the 6-hour stabilization rule with the real water surface behavior.
@@ -85,8 +78,9 @@ It does not redefine current requirements. The target behavior remains documente
 - Collected 5%-step analogWrite-based RPM data from 0% through 100%; this data is documented in `hardware-tests/fan-pwm-calibration/README.md`.
 - Manual fan PWM frequency A/B test completed successfully in both `analogWrite()` and local approximately 25 kHz TCC0 modes.
 - Observed approximately 25 kHz mode producing lower RPM than `analogWrite()` through much of the low-to-mid range, similar RPM at 75%, and slightly higher RPM at 100% in the A/B run.
-- The A/B test did not include acoustic notes, so the final v1 PWM strategy decision remains open.
-- Final approximately 25 kHz PWM generation and the final PWM-to-RPM calibration table remain separate validation tasks.
+- Observed no audible difference in sound profile or volume between `analogWrite()` and approximately 25 kHz PWM during the A/B test.
+- v1 decision: `analogWrite()`-based fan PWM is accepted.
+- Custom approximately 25 kHz fan PWM remains a future option only if noise or compatibility problems appear.
 
 ## Home Assistant validation tasks
 
@@ -100,8 +94,7 @@ It does not redefine current requirements. The target behavior remains documente
 
 ## Known technical risks
 
-- Nano 33 IoT PWM frequency may require low-level timer configuration.
-- A future PWM/timer library decision remains open if local test-sketch TCC0 code is not suitable for production.
+- Custom approximately 25 kHz fan PWM would require low-level timer configuration and TCC0 ownership if revisited.
 - TCS34725 on/off detection may be unreliable due to daylight and room lighting.
 - Water level signal may fluctuate because of pump-induced waves.
 - EEPROM is not continuously read during runtime; RAM is the source of truth after boot.
@@ -112,10 +105,9 @@ It does not redefine current requirements. The target behavior remains documente
 
 ## Deferred decisions
 
-- Exact SAMD21 timer configuration for approximately 25 kHz fan PWM.
-- Whether local TCC0 code, an external PWM/timer library, or `analogWrite()` should be used for v1 fan PWM.
-- Final minimum PWM value after fan hardware testing.
-- Final PWM-to-RPM calibration table for both fans.
+- Whether approximately 25 kHz fan PWM should be revisited if noise or compatibility problems appear.
+- Exact SAMD21 timer configuration and TCC0 ownership strategy if approximately 25 kHz fan PWM is adopted later.
+- Final production fan PWM-to-RPM table integration from the accepted `analogWrite()` calibration data.
 - Exact fallback behavior for AUTO fan mode when SHT45 is unavailable.
 - Exact Home Assistant UI layout after entities are implemented and visible.
 - Exact RTC alarm implementation path if RTClib alarm support is insufficient.
