@@ -136,22 +136,77 @@ Boolean fields use `1` for true and `0` for false.
 
 Minimum startup percent:
 
-TODO: Add measured result after hardware test.
+- Both fans started from stopped at 10% effective PWM.
+- Fan 1 started at 8% effective PWM, but fan 2 did not.
+- Neither fan started at 0% or 5% effective PWM.
 
 Minimum stable running percent:
 
-TODO: Add measured result after hardware test.
+- Both fans kept running at 8% effective PWM after the 30% spin-up phase.
+- Fan 1 kept running at 5% effective PWM, but fan 2 stopped.
+- Neither fan kept running at 0% effective PWM.
 
 Acoustic noise notes:
 
-TODO: Add subjective noise notes after hardware test.
+TODO: Add subjective noise notes after a dedicated acoustic check. No acoustic
+notes were captured in this Serial-only run.
 
 Stability notes:
 
-TODO: Add observed startup, stalling, oscillation, or mismatch notes after hardware test.
+- Fan 2 needed a higher startup percent than fan 1 in this run.
+- Fan 2 also stopped at 5% during the stable-running test while fan 1 continued.
+- The 5% calibration step from stopped produced 0 RPM for both fans.
+- The 10% calibration step started both fans and settled around 405 RPM for fan 1 and 445 RPM for fan 2.
+- The final production minimum should be confirmed again after the final PWM strategy is selected.
+
+Summary:
+
+| Finding | Effective PWM | Arduino PWM | Notes |
+|---|---:|---:|---|
+| Minimum startup, both fans | 10% | 230 | Fan 1 average 441.0 RPM, fan 2 average 685.5 RPM. |
+| Minimum stable running, both fans | 8% | 235 | Fan 1 average 447.9 RPM, fan 2 average 439.3 RPM. |
+| Fan 1 only stable running | 5% | 243 | Fan 1 average 447.9 RPM, fan 2 stopped. |
 
 Calibration table paste area:
 
 ```text
-TODO: Paste STARTUP_RESULT, RUNNING_RESULT, and CAL_RESULT lines from Serial output.
+STARTUP_RESULT,0,255,0.0,0.0,0,0
+STARTUP_RESULT,5,243,0.0,0.0,0,0
+STARTUP_RESULT,8,235,450.0,0.0,1,0
+STARTUP_RESULT,10,230,441.0,685.5,1,1
+STARTUP_RESULT,12,225,564.0,789.0,1,1
+STARTUP_RESULT,15,217,763.5,987.0,1,1
+STARTUP_RESULT,18,210,915.0,1138.5,1,1
+STARTUP_RESULT,20,204,1062.0,1269.0,1,1
+
+RUNNING_RESULT,20,204,1167.9,1230.0,1,1
+RUNNING_RESULT,18,210,979.3,1022.1,1,1
+RUNNING_RESULT,15,217,818.6,842.1,1,1
+RUNNING_RESULT,12,225,610.7,615.0,1,1
+RUNNING_RESULT,10,230,460.7,467.1,1,1
+RUNNING_RESULT,8,235,447.9,439.3,1,1
+RUNNING_RESULT,5,243,447.9,0.0,1,0
+RUNNING_RESULT,0,255,2.1,0.0,0,0
+
+CAL_RESULT,0,255,0.0,0.0,0.0,0.0,0.0,0.0
+CAL_RESULT,5,243,0.0,0.0,0.0,0.0,0.0,0.0
+CAL_RESULT,10,230,405.0,445.0,405.0,405.0,435.0,450.0
+CAL_RESULT,15,217,760.0,780.0,750.0,765.0,780.0,780.0
+CAL_RESULT,20,204,1090.0,1125.0,1080.0,1095.0,1125.0,1125.0
+CAL_RESULT,25,192,1410.0,1460.0,1410.0,1410.0,1455.0,1470.0
+CAL_RESULT,30,179,1700.0,1780.0,1695.0,1710.0,1770.0,1800.0
+CAL_RESULT,35,166,1985.0,2070.0,1980.0,1995.0,2070.0,2070.0
+CAL_RESULT,40,153,2270.0,2355.0,2265.0,2280.0,2355.0,2355.0
+CAL_RESULT,45,141,2530.0,2605.0,2520.0,2535.0,2595.0,2610.0
+CAL_RESULT,50,128,2760.0,2850.0,2760.0,2760.0,2850.0,2850.0
+CAL_RESULT,55,115,3025.0,3120.0,3015.0,3030.0,3120.0,3120.0
+CAL_RESULT,60,102,3265.0,3370.0,3255.0,3270.0,3360.0,3390.0
+CAL_RESULT,65,90,3490.0,3585.0,3480.0,3495.0,3570.0,3600.0
+CAL_RESULT,70,77,3735.0,3810.0,3720.0,3750.0,3810.0,3810.0
+CAL_RESULT,75,64,3940.0,4045.0,3930.0,3945.0,4035.0,4065.0
+CAL_RESULT,80,51,4150.0,4250.0,4140.0,4155.0,4245.0,4260.0
+CAL_RESULT,85,39,4345.0,4470.0,4335.0,4350.0,4470.0,4470.0
+CAL_RESULT,90,26,4460.0,4675.0,4425.0,4500.0,4665.0,4680.0
+CAL_RESULT,95,13,4650.0,4840.0,4650.0,4650.0,4830.0,4845.0
+CAL_RESULT,100,0,4880.0,5090.0,4875.0,4890.0,5085.0,5100.0
 ```

@@ -77,6 +77,10 @@ It does not redefine current requirements. The target behavior remains documente
 - Manual fan PWM/tach `analogWrite()` bring-up completed successfully.
 - Confirmed D6 inverting fan PWM control behavior, separate D9/D10 tach interrupt readings, and plausible RPM measurements for both Noctua NF-A4x20 5V PWM fans.
 - Observed effective 0% stopping both fans after spin-down and effective 100% producing approximately 4,860-5,040 RPM across the two fans in the initial run.
+- Manual fan PWM calibration `analogWrite()` run completed successfully.
+- Observed analogWrite-based minimum startup for both fans at 10% effective PWM; fan 1 alone started at 8%, fan 2 did not.
+- Observed analogWrite-based minimum stable running for both fans at 8% effective PWM after spin-up; fan 1 alone kept running at 5%, fan 2 did not.
+- Collected 5%-step analogWrite-based RPM data from 0% through 100%; this data is documented in `hardware-tests/fan-pwm-calibration/README.md`.
 - Final approximately 25 kHz PWM generation and the final PWM-to-RPM calibration table remain separate validation tasks.
 
 ## Home Assistant validation tasks
