@@ -121,4 +121,21 @@ Serial output should show:
 
 ## Result notes
 
-TODO: Add measured results after hardware test.
+Manual test result, 2026-05-25:
+
+- RTC time read succeeded.
+- Example RTC time near alarm trigger: `2026-05-25 10:42:23`.
+- RTC lost-power flag at startup was `false`.
+- DS3231 32kHz output enabled flag at startup was `true`.
+- D8 32kHz prepared input read `HIGH`; no interrupt was attached and no 32kHz pulse count was attempted.
+- Alarm1 setup through RTClib succeeded.
+- Before the alarm trigger, D2 INT/SQW read `HIGH`.
+- At the Alarm1 trigger, the DS3231 alarm flag was set and D2 INT/SQW read `LOW`.
+- After clearing and disabling Alarm1, D2 INT/SQW returned to `HIGH`.
+- AT24C32 address check passed at `0x57`.
+- EEPROM write/read verification passed at test offset `0x0F00`.
+
+Open follow-up:
+
+- 32kHz pulse behavior on D8 was not measured by this test.
+- I2C and DS3231 signal voltage levels still depend on direct electrical measurement.
