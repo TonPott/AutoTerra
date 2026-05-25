@@ -23,7 +23,7 @@ It does not redefine current requirements. The target behavior remains documente
 - Verify final D6 timer setup and measured PWM frequency on real hardware.
 - Verify clean fan PWM signal shape with both fans connected to the shared 2N3904 collector node.
 - Validate that the selected ArduinoHA entity types work as expected for fan, select, number, binary sensor, button, switch, and text-like sensor output.
-- Validate DS3231 alarm support in RTClib; if incomplete, plan direct register handling inside `RtcClock`.
+- Validate integrated RTC scheduling behavior around RTClib alarms after `RtcClock` is implemented.
 - Confirm the final pin map against the real hardware layout before firmware implementation.
 - Verify whether normal light verification should run with the TCS34725 LED off, on, or in a controlled measurement sequence.
 - Verify TCS34725 INT behavior on D7 if future threshold or interrupt use is desired.
@@ -70,6 +70,10 @@ It does not redefine current requirements. The target behavior remains documente
   - `0x60` likely ATECC608A secure element
   - `0x6A` likely LSM6DS3 IMU
 - I2C voltage-safety validation remains separate from the successful bus scan unless SDA/SCL levels are measured directly.
+- Manual DS3231 + AT24C32 test completed successfully.
+- Confirmed DS3231 RTC time readout, RTClib Alarm1 setup, Alarm1 flag reporting, D2 INT/SQW active-LOW alarm behavior, and D2 returning HIGH after clearing and disabling Alarm1.
+- Confirmed AT24C32 EEPROM write/read verification at test offset `0x0F00`.
+- Observed D8 32kHz prepared input as HIGH during the test; 32kHz pulse counting was intentionally not performed.
 
 ## Home Assistant validation tasks
 
@@ -88,7 +92,7 @@ It does not redefine current requirements. The target behavior remains documente
 - Water level signal may fluctuate because of pump-induced waves.
 - EEPROM is not continuously read during runtime; RAM is the source of truth after boot.
 - `NTC_Thermistor` version selection may need revisiting.
-- RTClib alarm support may be incomplete for the intended DS3231 use.
+- Production RTC scheduling still needs integrated validation even though the standalone RTClib Alarm1 / D2 behavior passed.
 - ArduinoHA entity behavior may differ between simple proof-of-concept tests and the fully integrated device.
 - Pump safety depends on correct external relay wiring, enclosure, isolation, and mains handling, which firmware cannot guarantee.
 
@@ -99,7 +103,7 @@ It does not redefine current requirements. The target behavior remains documente
 - Final PWM-to-RPM calibration table for both fans.
 - Exact fallback behavior for AUTO fan mode when SHT45 is unavailable.
 - Exact Home Assistant UI layout after entities are implemented and visible.
-- Exact RTC alarm implementation path if RTClib alarm support is insufficient.
+- Exact RTC alarm reconciliation behavior after `RtcClock` integration.
 - Final credentials example structure when WiFi and MQTT code is introduced.
 
 ## Out of scope for v1
